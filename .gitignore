@@ -10,15 +10,26 @@
 !.yarn/releases
 !.yarn/versions
 
+# Monorepo workspace dependencies
+apps/*/node_modules
+packages/*/node_modules
+
 # testing
 /coverage
+apps/*/coverage
+packages/*/coverage
 
 # next.js
 /.next/
 /out/
+apps/*/.next/
+apps/*/out/
 
 # production
 /build
+apps/*/build
+packages/*/dist
+packages/*/build
 
 # misc
 .DS_Store
@@ -32,13 +43,18 @@ yarn-error.log*
 # env files
 .env
 .env*.local
+apps/*/.env
+apps/*/.env*.local
 
 # vercel
 .vercel
+apps/*/.vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+apps/*/next-env.d.ts
 
 # prisma
 /prisma/migrations
+packages/database/prisma/migrations
