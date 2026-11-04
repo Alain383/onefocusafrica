@@ -21,13 +21,13 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    // Save to database
+    // Save to database - serialize interests array to JSON
     const member = await prisma.communityMember.create({
       data: {
         fullName: validatedData.fullName,
         email: validatedData.email,
         whatsappPhone: validatedData.whatsappPhone,
-        interests: validatedData.interests,
+        interests: JSON.stringify(validatedData.interests),
         membershipFee: 2.00,
         paymentStatus: 'pending',
       },
