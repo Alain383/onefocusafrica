@@ -1,0 +1,233 @@
+// Prisma schema for ONEFOCUS AFRICA - PostgreSQL
+// Shared database package for monorepo architecture
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Inquiry {
+  id          String   @id @default(uuid()) @db.Uuid
+  fullName    String   @db.VarChar(255)
+  workEmail   String   @db.VarChar(255)
+  company     String?  @db.VarChar(255)
+  industry    String?  @db.VarChar(255)
+  country     String?  @db.VarChar(100)
+  website     String?  @db.VarChar(500)
+  serviceArea String   @db.VarChar(100) // Brand, Cinematic, Web, Corporate, Talent
+  challenge   String   @db.Text
+  objective   String?  @db.Text
+  timeline    String?  @db.VarChar(100)
+  consent     Boolean  @default(false)
+  status      String   @default("new") @db.VarChar(50) // new, contacted, qualified, proposal, closed
+  source      String   @default("website") @db.VarChar(100) // website, referral, etc
+  assignedTo   String?  @db.Uuid
+  notes        String?  @db.Text
+  followUpDate DateTime? @db.Timestamptz(3)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model CommunityMember {
+  id            String   @id @default(uuid()) @db.Uuid
+  fullName      String   @db.VarChar(255)
+  email         String   @unique @db.VarChar(255)
+  whatsappPhone String?  @db.VarChar(50)
+  membershipFee Float    @default(2.00) @db.DoublePrecision
+  paymentStatus String   @default("pending") @db.VarChar(50) // pending, completed
+  interests     String   @db.Text // JSON array of interest areas
+  joinedAt      DateTime @default(now()) @db.Timestamptz(3)
+  isActive      Boolean  @default(true)
+
+  @@index([email])
+  @@index([paymentStatus])
+}
+
+model NewsletterSubscriber {
+  id          String   @id @default(uuid()) @db.Uuid
+  email       String   @unique @db.VarChar(255)
+  subscribedAt DateTime @default(now()) @db.Timestamptz(3)
+  isActive    Boolean  @default(true)
+}
+
+model CaseStudy {
+  id            String   @id @default(uuid()) @db.Uuid
+  title         String   @db.VarChar(500)
+  slug          String   @unique @db.VarChar(500)
+  category      String   @db.VarChar(100) // Brand, Media, Web, Training
+  clientName    String?  @db.VarChar(255)
+  challenge     String   @db.Text
+  solution      String   @db.Text
+  deliverables  String   @db.Text // JSON array of deliverables
+  outcome       String   @db.Text
+  publishedAssets String @db.Text // JSON array of URLs or paths
+  isPublished   Boolean  @default(false)
+  publishedAt   DateTime? @db.Timestamptz(3)
+  createdAt     DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([slug])
+  @@index([category])
+  @@index([isPublished])
+}
+
+enum AdminRole {
+  ADMIN
+  EDITOR
+}
+
+enum PostStatus {
+  DRAFT
+  REVIEW
+  SCHEDULED
+  PUBLISHED
+}
+
+enum ProgramStatus {
+  active
+  inactive
+}
+
+enum EventStatus {
+  upcoming
+  past
+  cancelled
+}
+
+model AdminUser {
+  id             String    @id @default(uuid()) @db.Uuid
+  name           String    @db.VarChar(255)
+  email          String    @unique @db.VarChar(255)
+  hashedPassword String    @db.VarChar(255)
+  role           AdminRole @default(EDITOR)
+  isActive       Boolean   @default(true)
+  lastLoginAt    DateTime? @db.Timestamptz(3)
+  createdAt      DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime  @updatedAt @db.Timestamptz(3)
+
+  posts          Post[]
+  mediaAssets    MediaAsset[]
+  siteContents   SiteContent[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Post {
+  id             String     @id @default(uuid()) @db.Uuid
+  title          String     @db.VarChar(500)
+  slug           String     @unique @db.VarChar(500)
+  content        String     @db.Text
+  excerpt        String?    @db.Text
+  coverImage     String?    @db.VarChar(1000)
+  seoTitle       String?    @db.VarChar(255)
+  seoDescription String?    @db.VarChar(500)
+  status         PostStatus @default(DRAFT)
+  scheduledAt    DateTime?  @db.Timestamptz(3)
+  publishedAt    DateTime?  @db.Timestamptz(3)
+  authorId       String     @db.Uuid
+  author         AdminUser  @relation(fields: [authorId], references: [id])
+  categories     PostCategory[] @relation("PostToCategory")
+  tags           PostTag[]      @relation("PostToTag")
+  createdAt      DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime   @updatedAt @db.Timestamptz(3)
+
+  @@index([slug])
+  @@index([status])
+  @@index([publishedAt])
+  @@index([authorId])
+}
+
+model PostCategory {
+  id    String @id @default(uuid()) @db.Uuid
+  name  String @unique @db.VarChar(255)
+  slug  String @unique @db.VarChar(255)
+  posts Post[] @relation("PostToCategory")
+
+  @@index([slug])
+}
+
+model PostTag {
+  id    String @id @default(uuid()) @db.Uuid
+  name  String @unique @db.VarChar(255)
+  slug  String @unique @db.VarChar(255)
+  posts Post[] @relation("PostToTag")
+}
+
+model MediaAsset {
+  id            String    @id @default(uuid()) @db.Uuid
+  filename      String    @db.VarChar(500)
+  originalName  String    @db.VarChar(500)
+  url           String    @db.VarChar(1000)
+  mimeType      String    @db.VarChar(100)
+  size          Int
+  uploadedById  String    @db.Uuid
+  uploadedBy    AdminUser @relation(fields: [uploadedById], references: [id])
+  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
+
+  @@index([uploadedById])
+  @@index([mimeType])
+}
+
+model SiteContent {
+  id          String    @id @default(uuid()) @db.Uuid
+  section     String    @db.VarChar(100)
+  key         String    @db.VarChar(100)
+  value       String    @db.Text
+  updatedById String    @db.Uuid
+  updatedBy   AdminUser @relation(fields: [updatedById], references: [id])
+  updatedAt   DateTime  @updatedAt @db.Timestamptz(3)
+
+  @@unique([section, key])
+  @@index([section])
+}
+
+model Program {
+  id          String        @id @default(uuid()) @db.Uuid
+  title       String        @db.VarChar(255)
+  description String        @db.Text
+  icon        String?       @db.VarChar(500)
+  status      ProgramStatus @default(active)
+  urlAnchor   String?       @db.VarChar(100)
+  createdAt   DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime      @updatedAt @db.Timestamptz(3)
+
+  @@index([status])
+}
+
+model Event {
+  id               String      @id @default(uuid()) @db.Uuid
+  title            String      @db.VarChar(255)
+  description      String      @db.Text
+  eventDate        DateTime    @db.Timestamptz(3)
+  location         String?     @db.VarChar(255)
+  status           EventStatus @default(upcoming)
+  registrationLink String?     @db.VarChar(1000)
+  createdAt        DateTime    @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime    @updatedAt @db.Timestamptz(3)
+
+  @@index([status])
+  @@index([eventDate])
+}
+
+model TeamMember {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(255)
+  roleTitle String   @db.VarChar(255)
+  bio       String?  @db.Text
+  photo     String?  @db.VarChar(1000)
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([isActive])
+  @@index([sortOrder])
+}

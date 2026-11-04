@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Prisma
+prisma/migrations/
+*.db
+*.db-journal
+
+# Environment
+.env
+.env.local
+.env.*.local
