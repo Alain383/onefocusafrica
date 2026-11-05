@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
 import { Poppins, Rowdies } from 'next/font/google'
 import './globals.css'
-import Header from '@/components/sections/Header'
-import Footer from '@/components/sections/Footer'
 
 const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
@@ -39,9 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} ${rowdies.variable}`}>
       <body>
-        <Header />
-        <main className="pt-16 lg:pt-20">{children}</main>
-        <Footer />
+        {children}
       </body>
     </html>
   )
