@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Shared Prisma Client for ONEFOCUS AFRICA Monorepo
  * 
  * This singleton instance ensures a single PrismaClient connection
@@ -9,7 +9,7 @@
  *   const users = await prisma.adminUser.findMany()
  */
 
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 
 // Prevent multiple instances of Prisma Client in development
 const globalForPrisma = globalThis as unknown as {
@@ -17,10 +17,10 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 // Configure logging based on environment
-const logConfig =
+const logConfig: Prisma.LogLevel[] =
   process.env.NODE_ENV === 'development'
-    ? ['query', 'error', 'warn'] as const
-    : ['error'] as const
+    ? ['query', 'error', 'warn']
+    : ['error']
 
 // Create singleton Prisma Client instance
 export const prisma =
