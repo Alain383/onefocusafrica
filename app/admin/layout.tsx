@@ -10,9 +10,9 @@ export default async function AdminLayout({
 }) {
   const session = await auth()
 
-  // If no session, redirect to login
+  // If no session, redirect to login (outside admin structure)
   if (!session) {
-    redirect('/admin/login')
+    redirect('/auth/login')
   }
 
   // Extract user info with defaults

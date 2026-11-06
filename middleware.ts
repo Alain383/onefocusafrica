@@ -9,17 +9,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
   
-  // Allow login page without authentication
-  if (pathname === '/admin/login') {
-    return NextResponse.next()
-  }
-  
   // Check for session token (NextAuth JWT)
   const token = request.cookies.get('authjs.session-token') || request.cookies.get('__Secure-authjs.session-token')
   
-  // If no token, redirect to login
+  // If no token, redirect to login (outside admin structure)
   if (!token) {
-    const loginUrl = new URL('/admin/login', request.url)
+    const loginUrl = new URL('/auth/login', request.url)
     return NextResponse.redirect(loginUrl)
   }
   
