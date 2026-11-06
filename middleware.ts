@@ -1,28 +1,32 @@
-import { auth } from '@/lib/auth'
-import { NextResponse } from 'next/server'
+﻿import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export default auth((req) => {
-  const isLoggedIn = !!req.auth
-  const isOnAdminRoute = req.nextUrl.pathname.startsWith('/admin')
-  const isOnLoginPage = req.nextUrl.pathname === '/admin/login'
-
-  // Allow access to login page
-  if (isOnLoginPage) {
-    // Redirect to dashboard if already logged in
-    if (isLoggedIn) {
-      return NextResponse.redirect(new URL('/admin', req.url))
-    }
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  
+  // Only apply to admin routes
+  if (!pathname.startsWith('/admin')) {
     return NextResponse.next()
   }
-
-  // Protect admin routes
-  if (isOnAdminRoute && !isLoggedIn) {
-    return NextResponse.redirect(new URL('/admin/login', req.url))
+  
+  // Allow login page without authentication
+  if (pathname === '/admin/login') {
+    return NextResponse.next()
   }
-
+  
+  // Check for session token (NextAuth JWT)
+  const token = request.cookies.get('authjs.session-token') || request.cookies.get('__Secure-authjs.session-token')
+  
+  // If no token, redirect to login
+  if (!token) {
+    const loginUrl = new URL('/admin/login', request.url)
+    return NextResponse.redirect(loginUrl)
+  }
+  
+  // Token exists, allow access
   return NextResponse.next()
-})
+}
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*']
 }
