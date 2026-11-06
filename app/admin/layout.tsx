@@ -15,7 +15,7 @@ export default async function AdminLayout({
     redirect('/admin/login')
   }
 
-  // Extract user info with defaults to prevent undefined errors
+  // Extract user info with defaults
   const userName = session.user?.name ?? 'Admin User'
   const userRole = (session.user?.role as 'ADMIN' | 'EDITOR') ?? 'ADMIN'
 
