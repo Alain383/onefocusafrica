@@ -1,6 +1,8 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Poppins, Rowdies } from 'next/font/google'
 import './globals.css'
+import ConditionalLayout from '@/components/ConditionalLayout'
+import AuthProvider from '@/components/AuthProvider'
 
 const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
@@ -35,9 +37,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${rowdies.variable}`}>
-      <body>
-        {children}
+    <html lang="en" className={`${poppins.variable} ${rowdies.variable}`} suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <AuthProvider>
+          <ConditionalLayout>{children}</ConditionalLayout>
+        </AuthProvider>
       </body>
     </html>
   )
