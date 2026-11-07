@@ -1,15 +1,17 @@
+﻿import { config } from 'dotenv'
+import { resolve } from 'path'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 
-async function main() {
-  const email = process.env.ADMIN_EMAIL
-  const password = process.env.ADMIN_PASSWORD
-  const name = process.env.ADMIN_NAME
+// Load .env.local
+config({ path: resolve(process.cwd(), '.env.local') })
 
-  if (!email || !password || !name) {
-    console.error('Missing required env vars: ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_NAME')
-    process.exit(1)
-  }
+async function main() {
+  const email = process.env.ADMIN_EMAIL || 'admin@onefocusafrica.com'
+  const password = process.env.ADMIN_PASSWORD || 'admin123'
+  const name = process.env.ADMIN_NAME || 'Admin User'
+
+  console.log(`Seeding admin user: ${email}`)
 
   const hashedPassword = await bcrypt.hash(password, 12)
 
@@ -25,12 +27,12 @@ async function main() {
     },
   })
 
-  console.log(`Admin user upserted: ${user.email} (id: ${user.id})`)
+  console.log(`✓ Admin user created/updated: ${user.email} (id: ${user.id})`)
 }
 
 main()
   .catch((e) => {
-    console.error(e)
+    console.error('Error seeding admin:', e.message)
     process.exit(1)
   })
   .finally(async () => {
