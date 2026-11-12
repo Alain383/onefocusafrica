@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -27,9 +27,18 @@ export default function Header() {
     { name: 'Solutions', href: '/solutions' },
     { name: 'Our Work', href: '/work' },
     { name: 'Talent & Learning', href: '/talent' },
+    { name: 'Blog & Insights', href: '/blog' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ]
+
+  // Helper to check if a navigation item is active
+  const isActive = (href: string) => {
+    if (href === '/blog') {
+      return pathname === '/blog' || pathname?.startsWith('/blog/')
+    }
+    return pathname === href
+  }
 
   return (
     <header
@@ -70,7 +79,7 @@ export default function Header() {
               />
               <span
                 className={[
-                  'ml-2.5 text-sm font-bold tracking-[0.08em] uppercase hidden sm:block transition-colors duration-300',
+                  'ml-2.5 text-xs sm:text-sm font-bold tracking-[0.08em] uppercase transition-colors duration-300',
                   solid ? 'text-[#10183F]' : 'text-white',
                 ].join(' ')}
                 style={{ fontFamily: 'var(--font-heading)' }}
@@ -116,15 +125,24 @@ export default function Header() {
                 role="menuitem"
                 className={[
                   'text-base font-medium transition-colors relative group',
-                  solid
-                    ? 'text-[#10183F] hover:text-[#1F99ED]'
-                    : 'text-white/90 hover:text-[#1F99ED]',
+                  isActive(item.href)
+                    ? solid
+                      ? 'text-[#1F99ED]'
+                      : 'text-[#1F99ED]'
+                    : solid
+                      ? 'text-[#10183F] hover:text-[#1F99ED]'
+                      : 'text-white/90 hover:text-[#1F99ED]',
                 ].join(' ')}
                 style={{ fontFamily: 'var(--font-body)' }}
               >
                 {item.name}
-                {/* Picton Blue underline on hover */}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#1F99ED] transition-all duration-200 group-hover:w-full rounded-full" />
+                {/* Picton Blue underline on hover or active */}
+                <span
+                  className={[
+                    'absolute -bottom-1 left-0 h-0.5 bg-[#1F99ED] transition-all duration-200 rounded-full',
+                    isActive(item.href) ? 'w-full' : 'w-0 group-hover:w-full',
+                  ].join(' ')}
+                />
               </Link>
             ))}
           </div>
@@ -153,9 +171,13 @@ export default function Header() {
                   href={item.href}
                   className={[
                     'block px-3 py-2.5 text-base font-medium rounded-[5px] transition-colors',
-                    solid
-                      ? 'text-[#10183F] hover:bg-[#EEF6FD] hover:text-[#1F99ED]'
-                      : 'text-white hover:bg-white/10 hover:text-[#1F99ED]',
+                    isActive(item.href)
+                      ? solid
+                        ? 'bg-[#EEF6FD] text-[#1F99ED]'
+                        : 'bg-white/10 text-[#1F99ED]'
+                      : solid
+                        ? 'text-[#10183F] hover:bg-[#EEF6FD] hover:text-[#1F99ED]'
+                        : 'text-white hover:bg-white/10 hover:text-[#1F99ED]',
                   ].join(' ')}
                   style={{ fontFamily: 'var(--font-body)' }}
                   onClick={() => setIsMenuOpen(false)}

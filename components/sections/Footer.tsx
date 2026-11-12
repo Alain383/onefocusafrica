@@ -1,9 +1,16 @@
+﻿'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Container from '../ui/Container'
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear()
+  const [currentYear, setCurrentYear] = useState(2024)
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear())
+  }, [])
 
   const footerLinks = {
     Business: [
@@ -16,6 +23,7 @@ export default function Footer() {
       { name: 'Talent & Learning', href: '/talent' },
       { name: 'Academy', href: '/talent#academy' },
       { name: 'VIP Community', href: '/talent#community' },
+      { name: 'Blog & Insights', href: '/blog' },
     ],
     Company: [
       { name: 'About', href: '/about' },

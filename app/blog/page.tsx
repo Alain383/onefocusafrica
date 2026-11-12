@@ -1,14 +1,11 @@
-﻿import { prisma } from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Prisma } from '@prisma/client'
 
 const PAGE_SIZE = 12
 
-export const metadata: Metadata = {
-  title: 'Blog | ONEFOCUS AFRICA',
-  description: 'Insights, articles, and updates from ONEFOCUS AFRICA.',
-}
+export const metadata: Metadata = {  title: 'Blog & Insights | ONEFOCUS AFRICA',  description: 'Insights, articles, and updates from ONEFOCUS AFRICA.',}
 
 interface PageProps {
   searchParams: Promise<{ page?: string; category?: string; q?: string }>
