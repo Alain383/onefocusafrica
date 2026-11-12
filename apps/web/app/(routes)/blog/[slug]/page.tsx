@@ -50,8 +50,8 @@ export default async function BlogArticlePage({ params }: Props) {
   const post = await prisma.post.findUnique({
     where: { slug, status: 'PUBLISHED' },
     include: {
-      PostCategory: { select: { name: true, slug: true } },
-      PostTag: { select: { name: true, slug: true } },
+      categories: { select: { name: true, slug: true } },
+      tags: { select: { name: true, slug: true } },
     },
   })
 
@@ -92,9 +92,9 @@ export default async function BlogArticlePage({ params }: Props) {
 
       <article className="max-w-4xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
         {/* Categories */}
-        {post.PostCategory.length > 0 && (
+        {post.categories.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
-            {post.PostCategory.map((cat: { name: string; slug: string }) => (
+            {post.categories.map((cat: { name: string; slug: string }) => (
               <Link
                 key={cat.slug}
                 href={`/blog?category=${cat.slug}`}
@@ -162,11 +162,11 @@ export default async function BlogArticlePage({ params }: Props) {
         />
 
         {/* Tags */}
-        {post.PostTag.length > 0 && (
+        {post.tags.length > 0 && (
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-12">
             <p className="text-sm font-semibold text-gray-700 mb-3">Tags:</p>
             <div className="flex flex-wrap gap-2">
-              {post.PostTag.map((tag: { name: string; slug: string }) => (
+              {post.tags.map((tag: { name: string; slug: string }) => (
                 <span
                   key={tag.slug}
                   className="px-4 py-2 bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-200"

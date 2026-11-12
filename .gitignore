@@ -105,3 +105,8 @@ Thumbs.db
 # Kiro temporary files
 .kiro/temp/
 .kiro/cache/
+.neon
+
+# Build and install logs
+*.txt
+!README.txt
