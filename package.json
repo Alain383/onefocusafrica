@@ -34,6 +34,8 @@
     "npm": ">=9.0.0"
   },
   "dependencies": {
-    "@tiptap/extension-image": "^3.33.0"
+    "@prisma/client": "^6.19.3",
+    "browserslist": "^4.29.5",
+    "caniuse-lite": "^1.0.30001826"
   }
 }

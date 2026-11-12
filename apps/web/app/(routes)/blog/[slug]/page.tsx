@@ -41,7 +41,7 @@ export async function generateStaticParams() {
     where: { status: 'PUBLISHED' },
     select: { slug: true },
   })
-  return posts.map((p) => ({ slug: p.slug }))
+  return posts.map((p: { slug: string }) => ({ slug: p.slug }))
 }
 
 export default async function BlogArticlePage({ params }: Props) {
@@ -94,7 +94,7 @@ export default async function BlogArticlePage({ params }: Props) {
         {/* Categories */}
         {post.categories.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
-            {post.categories.map((cat) => (
+            {post.categories.map((cat: { name: string; slug: string }) => (
               <Link
                 key={cat.slug}
                 href={`/blog?category=${cat.slug}`}
@@ -166,7 +166,7 @@ export default async function BlogArticlePage({ params }: Props) {
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-12">
             <p className="text-sm font-semibold text-gray-700 mb-3">Tags:</p>
             <div className="flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
+              {post.tags.map((tag: { name: string; slug: string }) => (
                 <span
                   key={tag.slug}
                   className="px-4 py-2 bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-200"

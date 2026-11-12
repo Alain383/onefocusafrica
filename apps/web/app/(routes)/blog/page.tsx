@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import type { Prisma } from '@prisma/client'
+import type { Prisma } from '@onefocus/database'
 import Image from 'next/image'
 
 const PAGE_SIZE = 9
