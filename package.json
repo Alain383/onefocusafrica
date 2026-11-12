@@ -1,35 +1,39 @@
 {
-  "name": "onefocus-africa",
+  "name": "onefocus-monorepo",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "prisma:generate": "prisma generate",
-    "prisma:push": "prisma db push"
-  },
-  "dependencies": {
-    "@prisma/client": "^6.2.0",
-    "@tailwindcss/postcss": "^4.0.0",
-    "framer-motion": "^12.0.0",
-    "next": "^15.1.6",
-    "nodemailer": "^6.9.15",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "zod": "^3.24.1"
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:admin": "npm run dev --workspace=apps/admin",
+    "dev:all": "concurrently \"npm run dev:web\" \"npm run dev:admin\"",
+    "build:web": "npm run build --workspace=apps/web",
+    "build:admin": "npm run build --workspace=apps/admin",
+    "build:all": "npm run build --workspaces --if-present",
+    "test:web": "npm run test --workspace=apps/web",
+    "test:admin": "npm run test --workspace=apps/admin",
+    "test:all": "npm run test --workspaces --if-present",
+    "db:generate": "npm run generate --workspace=packages/database",
+    "db:migrate": "npm run migrate --workspace=packages/database",
+    "db:migrate:deploy": "npm run migrate:deploy --workspace=packages/database",
+    "db:studio": "npm run studio --workspace=packages/database",
+    "lint": "npm run lint --workspaces --if-present",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules apps/*/.next"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
-    "@types/nodemailer": "^6.4.16",
-    "@types/react": "^19.0.6",
-    "autoprefixer": "10.4.17",
+    "concurrently": "^9.1.2",
     "eslint": "^9.18.0",
-    "eslint-config-next": "^15.1.6",
-    "postcss": "8.4.35",
-    "prisma": "^6.2.0",
-    "tailwindcss": "3.4.1",
-    "typescript": "^5.7.2"
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@tiptap/extension-image": "^3.33.0"
   }
 }
