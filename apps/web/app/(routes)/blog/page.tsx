@@ -29,7 +29,7 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
 
   const where: Prisma.PostWhereInput = {
     status: 'PUBLISHED',
-    ...(params.category ? { categories: { some: { slug: params.category } } } : {}),
+    ...(params.category ? { PostCategory: { some: { slug: params.category } } } : {}),
   }
 
   const [allPosts, categories] = await Promise.all([
@@ -44,7 +44,7 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
         coverImage: true,
         publishedAt: true,
         content: true,
-        categories: { select: { name: true, slug: true } },
+        PostCategory: { select: { name: true, slug: true } },
       },
     }),
     prisma.postCategory.findMany({ orderBy: { name: 'asc' }, select: { name: true, slug: true } }),
@@ -154,9 +154,9 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
                     {/* Content */}
                     <div className="p-6 flex flex-col flex-grow">
                       {/* Category Badge */}
-                      {post.categories.length > 0 && (
+                      {post.PostCategory.length > 0 && (
                         <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">
-                          {post.categories[0].name}
+                          {post.PostCategory[0].name}
                         </span>
                       )}
 
