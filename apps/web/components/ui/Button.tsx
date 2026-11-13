@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { ReactNode } from 'react'
 
 interface ButtonProps {
@@ -28,9 +28,9 @@ export default function Button({
 
   // Border-radius is 5px per Brand Guidelines
   const variants = {
-    // Picton Blue #1F99ED — primary action color (headings, highlights, buttons)
+    // Picton Blue #1F99ED — primary action color with dark hover
     primary:
-      'bg-[#1F99ED] text-white hover:bg-[#2E3192] focus:ring-[#1F99ED] rounded-[5px]',
+      'bg-[#1F99ED] text-white hover:bg-[#2E3129] focus:ring-[#1F99ED] rounded-[5px]',
     // Persian Blue — secondary depth/premium
     secondary:
       'bg-[#2E3192] text-white hover:bg-[#10183F] focus:ring-[#2E3192] rounded-[5px]',
