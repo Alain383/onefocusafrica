@@ -170,15 +170,11 @@ export default async function BlogArticlePage({ params }: Props) {
         />
 
         {/* Social Share Section */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-12">
-          <h3 className="text-lg font-bold text-[#0F172A] mb-4">Share this article</h3>
-          <SocialShare 
-            url={`https://onefocusafrica.com/blog/${post.slug}`}
-            title={post.title}
-            description={post.excerpt ?? ''}
-            image={post.coverImage ?? undefined}
-          />
-        </div>
+        <SocialShare 
+          url={`https://onefocusafrica.com/blog/${post.slug}`}
+          title={post.title}
+          description={post.excerpt ?? ''}
+        />
 
         {/* Tags */}
         {post.tags.length > 0 && (
