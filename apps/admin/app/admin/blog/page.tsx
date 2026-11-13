@@ -3,7 +3,7 @@ import PageHeader from '@/components/admin/PageHeader'
 import Link from 'next/link'
 import BlogFilters from './BlogFilters'
 import BlogTable from './BlogTable'
-import type { Prisma } from '@prisma/client'
+import type { Prisma } from '@onefocus/database'
 
 const PAGE_SIZE = 20
 

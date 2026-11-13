@@ -1,7 +1,7 @@
 ﻿import { writeFile } from 'fs/promises'
 import { join } from 'path'
 import { prisma } from '@/lib/prisma'
-import type { MediaAsset } from '@prisma/client'
+import type { MediaAsset } from '@onefocus/database'
 
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
