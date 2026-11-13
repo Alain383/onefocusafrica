@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/auth-utils'
 import { generateSlug, ensureUniqueSlug } from '@/lib/slug'
 import { sanitizeHtml } from '@/lib/sanitize'
+import { revalidateWebApp } from '@/lib/revalidate-web'
 import { z } from 'zod'
 
 export type ActionResult<T = void> =
@@ -96,6 +97,8 @@ export async function savePost(
     if (data.status === 'PUBLISHED') {
       revalidatePath('/blog')
       revalidatePath(`/blog/${finalSlug}`)
+      // Cross-app: revalidate the public web app cache
+      void revalidateWebApp(['/blog', `/blog/${finalSlug}`, '/sitemap.xml'])
     }
     revalidatePath('/admin/blog')
 
@@ -119,6 +122,7 @@ export async function deletePost(id: string): Promise<ActionResult> {
     revalidatePath('/blog')
     revalidatePath(`/blog/${post.slug}`)
     revalidatePath('/admin/blog')
+    void revalidateWebApp(['/blog', `/blog/${post.slug}`, '/sitemap.xml'])
 
     return { success: true, data: undefined }
   } catch (err) {
