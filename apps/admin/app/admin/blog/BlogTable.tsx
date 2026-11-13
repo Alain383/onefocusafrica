@@ -1,9 +1,10 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
+import DateDisplay from '@/components/admin/DateDisplay'
 import { deletePost } from './actions'
 
 type Post = {
@@ -82,7 +83,9 @@ export default function BlogTable({ posts, total, page, pageSize }: BlogTablePro
                     </span>
                   </td>
                   <td className="px-4 py-3 text-gray-600 text-xs">{post.categories.map(c => c.name).join(', ') || '—'}</td>
-                  <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{new Date(post.createdAt).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                    <DateDisplay date={post.createdAt} />
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <Link href={`/admin/blog/${post.id}/edit`} className="text-[#1F99ED] hover:underline text-xs">Edit</Link>
