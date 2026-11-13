@@ -73,6 +73,8 @@ export default function AboutPage() {
                 height={500}
                 className="w-full h-auto object-cover"
                 priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                quality={80}
               />
             </div>
           </div>
@@ -90,6 +92,9 @@ export default function AboutPage() {
                 width={700}
                 height={500}
                 className="w-full h-auto object-cover"
+                loading="lazy"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                quality={80}
               />
             </div>
             <div className="order-1 lg:order-2">
@@ -219,6 +224,9 @@ export default function AboutPage() {
               width={1200}
               height={500}
               className="w-full h-[280px] sm:h-[360px] object-cover object-center"
+              loading="lazy"
+              sizes="100vw"
+              quality={75}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#10183F]/60 to-transparent" />
           </div>
@@ -268,6 +276,9 @@ export default function AboutPage() {
                 width={600}
                 height={500}
                 className="w-full h-auto object-cover"
+                loading="lazy"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                quality={80}
               />
             </div>
           </div>

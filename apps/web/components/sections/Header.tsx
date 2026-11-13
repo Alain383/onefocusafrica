@@ -71,6 +71,8 @@ export default function Header() {
                 width={160}
                 height={52}
                 priority
+                quality={90}
+                sizes="160px"
                 className={[
                   'h-8 sm:h-10 md:h-11 lg:h-12 w-auto object-contain transition-all duration-300',
                   solid ? 'brightness-100' : 'brightness-[10]',
