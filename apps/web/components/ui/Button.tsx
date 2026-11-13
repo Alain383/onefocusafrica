@@ -28,18 +28,18 @@ export default function Button({
 
   // Border-radius is 5px per Brand Guidelines
   const variants = {
-    // Picton Blue #1F99ED — primary action color with dark hover
+    // Picton Blue #1F99ED — primary action color with pure black hover
     primary:
-      'bg-[#1F99ED] text-white hover:bg-[#2E3129] focus:ring-[#1F99ED] rounded-[5px]',
+      'bg-[#1F99ED] text-white hover:bg-black hover:text-white focus:ring-[#1F99ED] rounded-[5px]',
     // Persian Blue — secondary depth/premium
     secondary:
-      'bg-[#2E3192] text-white hover:bg-[#10183F] focus:ring-[#2E3192] rounded-[5px]',
+      'bg-[#2E3192] text-white hover:bg-black hover:text-white focus:ring-[#2E3192] rounded-[5px]',
     // Outline — Picton Blue border with fill on hover
     outline:
-      'border-2 border-[#1F99ED] text-[#1F99ED] hover:bg-[#1F99ED] hover:text-white focus:ring-[#1F99ED] rounded-[5px] bg-transparent',
+      'border-2 border-[#1F99ED] text-[#1F99ED] hover:bg-black hover:text-white hover:border-black focus:ring-[#1F99ED] rounded-[5px] bg-transparent',
     // Ghost — minimal, text only
     ghost:
-      'text-[#1F99ED] hover:bg-[#EEF6FD] focus:ring-[#1F99ED] rounded-[5px]',
+      'text-[#1F99ED] hover:bg-black hover:text-white focus:ring-[#1F99ED] rounded-[5px]',
   }
 
   // Typography hierarchy: Poppins body sizes
