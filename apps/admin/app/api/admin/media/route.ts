@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
+import { put } from '@vercel/blob'
 import nextAuth from '@/lib/auth'
 const auth = nextAuth.auth
+import { prisma } from '@/lib/prisma'
+
+// NOTE: Existing images in apps/web/public/uploads are preserved for backward compatibility.
+// New uploads will use Vercel Blob storage for production-ready, persistent storage.
+// Migration path: Update MediaAsset records to point to new blob URLs after re-uploading images.
 
 export async function POST(request: NextRequest) {
   // Authentication check
@@ -31,36 +34,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File size must be less than 10 MB' }, { status: 400 })
     }
 
-    // Generate unique filename
-    const timestamp = Date.now()
-    const randomString = Math.random().toString(36).substring(7)
-    const extension = file.name.split('.').pop()
-    const filename = `${timestamp}-${randomString}.${extension}`
+    // Upload to Vercel Blob storage
+    const blob = await put(file.name, file, {
+      access: 'public',
+      addRandomSuffix: true,
+    })
 
-    // Save to apps/web/public/uploads directory (accessible from web app)
-    const uploadDir = join(process.cwd(), '..', 'web', 'public', 'uploads')
-    
-    // Create uploads directory if it doesn't exist
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true })
-    }
-
-    // Convert file to buffer and save
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    const filepath = join(uploadDir, filename)
-    
-    await writeFile(filepath, buffer)
-
-    // Return URL relative to the web app public directory
-    const url = `/uploads/${filename}`
+    // Save to database with blob URL
+    const asset = await prisma.mediaAsset.create({
+      data: {
+        filename: blob.pathname,
+        originalName: file.name,
+        url: blob.url,
+        mimeType: file.type,
+        size: file.size,
+        uploadedById: session.user.id,
+      },
+    })
 
     return NextResponse.json({
       asset: {
-        url,
-        filename,
+        id: asset.id,
+        url: blob.url,
+        filename: blob.pathname,
+        originalName: file.name,
         size: file.size,
         type: file.type,
+        createdAt: asset.createdAt,
       },
     })
   } catch (error) {
