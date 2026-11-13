@@ -13,33 +13,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
   ]
 
-  // Published blog posts
-  const posts = await prisma.post.findMany({
-    where: { status: 'PUBLISHED' },
-    select: { slug: true, updatedAt: true },
-    orderBy: { publishedAt: 'desc' },
-  })
+  // Skip dynamic routes during build if DATABASE_URL not available
+  if (!process.env.DATABASE_URL) {
+    return staticRoutes
+  }
 
-  const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${SITE_URL}/blog/${post.slug}`,
-    lastModified: post.updatedAt,
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }))
+  try {
+    // Published blog posts
+    const posts = await prisma.post.findMany({
+      where: { status: 'PUBLISHED' },
+      select: { slug: true, updatedAt: true },
+      orderBy: { publishedAt: 'desc' },
+    })
 
-  // Published case studies
-  const caseStudies = await prisma.caseStudy.findMany({
-    where: { isPublished: true },
-    select: { slug: true, updatedAt: true },
-  })
+    const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
+      url: `${SITE_URL}/blog/${post.slug}`,
+      lastModified: post.updatedAt,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }))
 
-  const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((cs) => ({
-    url: `${SITE_URL}/work/${cs.slug}`,
-    lastModified: cs.updatedAt,
-    changeFrequency: 'monthly',
-    priority: 0.7,
-  }))
+    // Published case studies
+    const caseStudies = await prisma.caseStudy.findMany({
+      where: { isPublished: true },
+      select: { slug: true, updatedAt: true },
+    })
 
-  return [...staticRoutes, ...postRoutes, ...caseStudyRoutes]
+    const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((cs) => ({
+      url: `${SITE_URL}/work/${cs.slug}`,
+      lastModified: cs.updatedAt,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }))
+
+    return [...staticRoutes, ...postRoutes, ...caseStudyRoutes]
+  } catch (error) {
+    console.warn('Could not fetch dynamic sitemap entries:', error)
+    return staticRoutes
+  }
 }
 
