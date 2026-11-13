@@ -45,12 +45,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  const posts = await prisma.post.findMany({
-    where: { status: 'PUBLISHED' },
-    select: { slug: true },
-  })
-  return posts.map((p: { slug: string }) => ({ slug: p.slug }))
+  // Skip static generation during build if DATABASE_URL is not available
+  if (!process.env.DATABASE_URL) {
+    return []
+  }
+  
+  try {
+    const posts = await prisma.post.findMany({
+      where: { status: 'PUBLISHED' },
+      select: { slug: true },
+    })
+    return posts.map((p: { slug: string }) => ({ slug: p.slug }))
+  } catch (error) {
+    console.warn('Could not generate static params for blog posts:', error)
+    return []
+  }
 }
+
+// Use dynamic rendering when static params aren't available
+export const dynamic = 'auto'
+export const dynamicParams = true
 
 export default async function BlogArticlePage({ params }: Props) {
   const { slug } = await params
