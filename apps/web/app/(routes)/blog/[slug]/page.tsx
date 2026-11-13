@@ -1,8 +1,10 @@
-import { prisma } from '@onefocus/database'
+﻿import { prisma } from '@onefocus/database'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
+import SocialShare from '@/components/blog/SocialShare'
+import BlogComments from '@/components/blog/BlogComments'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -32,6 +34,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: post.seoDescription ?? post.excerpt ?? undefined,
       images: post.coverImage ? [{ url: post.coverImage }] : undefined,
       type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.seoTitle ?? post.title,
+      description: post.seoDescription ?? post.excerpt ?? undefined,
+      images: post.coverImage ? [post.coverImage] : undefined,
     },
   }
 }
@@ -161,6 +169,17 @@ export default async function BlogArticlePage({ params }: Props) {
           style={{ fontFamily: 'var(--font-body)' }}
         />
 
+        {/* Social Share Section */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-12">
+          <h3 className="text-lg font-bold text-[#0F172A] mb-4">Share this article</h3>
+          <SocialShare 
+            url={`https://onefocusafrica.com/blog/${post.slug}`}
+            title={post.title}
+            description={post.excerpt ?? ''}
+            image={post.coverImage ?? undefined}
+          />
+        </div>
+
         {/* Tags */}
         {post.tags.length > 0 && (
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-12">
@@ -178,11 +197,17 @@ export default async function BlogArticlePage({ params }: Props) {
           </div>
         )}
 
+        {/* Comments Section */}
+        <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+          <h3 className="text-2xl font-bold text-[#0F172A] mb-6">Leave a Comment</h3>
+          <BlogComments postId={post.id} postSlug={post.slug} />
+        </div>
+
         {/* Back to Blog CTA */}
-        <div className="text-center pt-8 border-t border-gray-200">
+        <div className="text-center pt-12 border-t border-gray-200 mt-12">
           <Link 
             href="/blog" 
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[#1F99ED] text-white text-base font-semibold rounded-lg hover:bg-[#1a87d4] transition-all shadow-md hover:shadow-lg"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#1F99ED] text-white text-base font-semibold rounded-lg hover:bg-black hover:text-white transition-all shadow-md hover:shadow-lg"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
