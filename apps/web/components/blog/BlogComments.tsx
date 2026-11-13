@@ -11,10 +11,11 @@ interface Comment {
 }
 
 interface BlogCommentsProps {
+  postId: string
   postSlug: string
 }
 
-export default function BlogComments({ postSlug }: BlogCommentsProps) {
+export default function BlogComments({ postId, postSlug }: BlogCommentsProps) {
   const [comments, setComments] = useState<Comment[]>([])
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
