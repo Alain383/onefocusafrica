@@ -58,19 +58,19 @@ export default function MediaUploader() {
     }
   }
 
-  async function handleFiles(files: FileList | null) {
+  const handleFiles = useCallback(async (files: FileList | null) => {
     if (!files || files.length === 0) return
-    // Upload one at a time
     for (const file of Array.from(files)) {
       await uploadFile(file)
     }
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setDragOver(false)
-    handleFiles(e.dataTransfer.files)
-  }, [])
+    void handleFiles(e.dataTransfer.files)
+  }, [handleFiles])
 
   return (
     <div className="mb-8">
