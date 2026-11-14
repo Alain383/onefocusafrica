@@ -17,7 +17,6 @@ function checkRateLimit(ip: string): { blocked: boolean; message?: string } {
   if (entry) {
     const elapsed = now - entry.firstAttempt
     if (elapsed > WINDOW_MS) {
-      // Window expired - reset
       loginAttempts.delete(ip)
     } else if (entry.count >= MAX_ATTEMPTS) {
       const remaining = Math.ceil((WINDOW_MS - elapsed) / 60000)
@@ -45,6 +44,7 @@ function clearAttempts(ip: string) {
 }
 
 const nextAuthResult = NextAuth({
+  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
   providers: [
     Credentials({
       credentials: {
@@ -54,12 +54,8 @@ const nextAuthResult = NextAuth({
       },
       authorize: async (credentials) => {
         try {
-          console.log('[AUTH] Login attempt started')
-          console.log('[AUTH] Credentials:', credentials?.email)
-          
           const ip = (credentials?.ip as string) || '127.0.0.1'
 
-          // Rate limit check
           const rateCheck = checkRateLimit(ip)
           if (rateCheck.blocked) {
             throw new Error(rateCheck.message || 'Too many attempts.')
@@ -69,41 +65,31 @@ const nextAuthResult = NextAuth({
           const password = credentials?.password as string
 
           if (!email || !password) {
-            console.log('[AUTH] Missing email or password')
             recordFailedAttempt(ip)
             return null
           }
 
-          console.log('[AUTH] Querying database for user:', email)
           const user = await prisma.adminUser.findUnique({
             where: { email, isActive: true },
           })
 
-          console.log('[AUTH] User found in DB:', !!user)
           if (!user) {
-            console.log('[AUTH] User not found or inactive')
             recordFailedAttempt(ip)
             return null
           }
 
-          console.log('[AUTH] Comparing passwords...')
           const valid = await bcrypt.compare(password, user.hashedPassword)
-          console.log('[AUTH] Password valid:', valid)
-          
           if (!valid) {
-            console.log('[AUTH] Password comparison failed')
             recordFailedAttempt(ip)
             return null
           }
 
-          // Update last login time
           await prisma.adminUser.update({
             where: { id: user.id },
             data: { lastLoginAt: new Date() },
           })
 
           clearAttempts(ip)
-          console.log('[AUTH] Login successful for:', email)
           return { id: user.id, name: user.name, email: user.email, role: user.role }
         } catch (error) {
           console.error('[AUTH] Error during authorization:', error)
@@ -131,7 +117,9 @@ const nextAuthResult = NextAuth({
   },
   pages: {
     signIn: '/auth/login',
+    error: '/auth/login',
   },
+  trustHost: true,
 })
 
 export default nextAuthResult
