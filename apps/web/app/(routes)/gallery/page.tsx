@@ -11,12 +11,21 @@ export const metadata = {
 
 export const revalidate = 3600
 
-export default async function GalleryPage() {
-  const [items, heroEyebrow, heroTitle, heroDescription] = await Promise.all([
-    prisma.galleryItem.findMany({
+async function getGalleryItems() {
+  try {
+    return await prisma.galleryItem.findMany({
       where: { isPublished: true },
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
-    }),
+    })
+  } catch (error) {
+    console.warn('Gallery query failed:', error)
+    return []
+  }
+}
+
+export default async function GalleryPage() {
+  const [items, heroEyebrow, heroTitle, heroDescription] = await Promise.all([
+    getGalleryItems(),
     getPageText('gallery', 'hero_eyebrow'),
     getPageText('gallery', 'hero_title'),
     getPageText('gallery', 'hero_description'),
