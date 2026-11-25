@@ -8,6 +8,7 @@
     "generate": "prisma generate --schema=./prisma/schema.prisma",
     "migrate": "prisma migrate dev --schema=./prisma/schema.prisma",
     "migrate:deploy": "prisma migrate deploy --schema=./prisma/schema.prisma",
+    "migrate:resolve": "prisma migrate resolve --applied 20261118000001_media_asset_url_unique --schema=./prisma/schema.prisma",
     "studio": "prisma studio --schema=./prisma/schema.prisma",
     "push": "prisma db push --schema=./prisma/schema.prisma",
     "seed": "node ./scripts/seed.js",
