@@ -22,7 +22,7 @@ export default function Section({
   // white  = #FFFFFF — primary background (Brand Guidelines: white dominates layouts)
   // light  = #EEF6FD — subtle brand blue tint for alternating sections
   // dark   = #10183F — navy dark for CTA / contrast sections
-  // gradient = Picton Blue → Persian Blue diagonal gradient
+  // gradient = Picton Blue to Persian Blue diagonal gradient
   const backgrounds = {
     white:    'bg-white',
     light:    'bg-[#EEF6FD]',

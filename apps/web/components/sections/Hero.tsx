@@ -1,7 +1,26 @@
-﻿import Image from 'next/image'
+﻿import Link from 'next/link'
 import Button from '../ui/Button'
+import CmsMedia from '../CmsMedia'
+import { getMediaBlock, getSiteContent } from '@/lib/site-content'
 
-export default function Hero() {
+export default async function Hero() {
+  const headlineLead = await getSiteContent(
+    'home',
+    'hero_headline_lead',
+    'Make your business easier to'
+  )
+  const headlineAccent = await getSiteContent(
+    'home',
+    'hero_headline_accent',
+    'find, trust & choose.'
+  )
+  const subheading = await getSiteContent(
+    'home',
+    'hero_subheading',
+    'ONEFOCUS brings strategy, cinematic media, web technology and lead capture together so attention has somewhere valuable to go.'
+  )
+  const heroMedia = await getMediaBlock('home.hero')
+
   return (
     // Full-viewport cinematic hero — navbar overlays from above (fixed/absolute)
     <section className="relative h-screen min-h-[640px] max-h-[1080px] overflow-hidden -mt-16 lg:-mt-20">
@@ -9,14 +28,11 @@ export default function Hero() {
       {/* ── Zoomed-out cinematic image ──
            scale-110 pulls the image slightly back to create a "wide shot" feel.
            object-center keeps the subjects centred in frame.                  */}
-      <Image
-        src="/images/heroimage.webp"
-        alt="Young African professionals collaborating on digital strategy"
-        fill
+      <CmsMedia
+        block={heroMedia}
         priority
-        quality={95}
-        className="object-cover object-center scale-110"
         sizes="100vw"
+        className="object-cover object-center scale-110"
       />
 
       {/* ── Cinematic overlay ──
@@ -57,8 +73,8 @@ export default function Hero() {
               className="text-[2.6rem] md:text-[3.5rem] lg:text-[4.75rem] font-bold text-white mb-5 leading-[1.05] tracking-tight drop-shadow-md"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
-              Make your business easier to{' '}
-              <span className="text-[#1F99ED]">find, trust &amp; choose.</span>
+              {headlineLead}{' '}
+              <span className="text-[#1F99ED]">{headlineAccent}</span>
             </h1>
 
             {/* Subheading — Poppins Regular */}
@@ -66,22 +82,21 @@ export default function Hero() {
               className="text-lg md:text-xl text-white/80 mb-10 max-w-lg leading-relaxed"
               style={{ fontFamily: 'var(--font-body)' }}
             >
-              ONEFOCUS brings strategy, cinematic media, web technology and lead capture
-              together so attention has somewhere valuable to go.
+              {subheading}
             </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 items-start">
-              <Button href="/contact" variant="primary" size="lg">
+              <Button href="/contact?intent=PROJECT&subject=New%20project" variant="primary" size="lg">
                 Start a Project
               </Button>
-              <a
+              <Link
                 href="/work"
                 className="inline-flex items-center text-lg font-semibold text-white hover:text-[#1F99ED] transition-colors py-4 px-2"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                Explore Our Work →
-              </a>
+                Explore Our Work
+              </Link>
             </div>
 
           </div>

@@ -1,6 +1,7 @@
 ﻿import Section from '@/components/ui/Section'
 import Button from '@/components/ui/Button'
-import Image from 'next/image'
+import CmsMedia from '@/components/CmsMedia'
+import { getMediaBlock, getPageText, parseTextLines, parseTextRows } from '@/lib/site-content'
 
 export const metadata = {
   title: 'Talent & Learning | ONEFOCUS AFRICA',
@@ -8,31 +9,73 @@ export const metadata = {
     'Build skills, show work, discover opportunities. Courses, career guidance, mentorship and community.',
 }
 
-export default function TalentPage() {
-  const journey = [
-    { step: '1', title: 'Discover', description: 'Explore possible pathways and strengths.' },
-    { step: '2', title: 'Develop', description: 'Learn relevant tools and skills.' },
-    { step: '3', title: 'Build', description: 'Work on age-appropriate real projects.' },
-    { step: '4', title: 'Showcase', description: 'Present evidence of completed work.' },
-    { step: '5', title: 'Connect', description: 'Meet approved mentors and institutions.' },
-    { step: '6', title: 'Grow', description: 'Apply feedback to the next step.' },
-  ]
+export default async function TalentPage() {
+  const [heroMedia, programMedia, communityMedia] = await Promise.all([
+    getMediaBlock('talent.hero'),
+    getMediaBlock('talent.program'),
+    getMediaBlock('talent.community'),
+  ])
 
-  const programs = [
-    { icon: '✳', title: 'Learning Academy', description: 'Courses and practical workshops', href: '#academy' },
-    { icon: '✳', title: 'INZIRA AI', description: 'Career guidance concept; confirm live functionality before launch', href: '#inzira' },
-    { icon: '✳', title: 'HYPERDRIVE', description: 'Entrepreneurship learning and project challenges', href: '#hyperdrive' },
-    { icon: '✳', title: 'School Outreach', description: 'School-approved, supervised learner programs', href: '#school' },
-    { icon: '✳', title: '1FOCUS VIP Inner Circle', description: 'Peer learning and community support', href: '#community' },
-    { icon: '✳', title: 'Mentorship & Internships', description: 'Program availability and safeguards must be verified', href: '#mentorship' },
-  ]
+  const textKeys = [
+    'hero_eyebrow',
+    'hero_title',
+    'hero_tagline',
+    'hero_description',
+    'hero_button',
+    'journey_title',
+    'journey_subtitle',
+    'journey_steps',
+    'programs_eyebrow',
+    'programs_title',
+    'programs_description',
+    'programs_items',
+    'academy_eyebrow',
+    'academy_title',
+    'academy_tagline',
+    'academy_description',
+    'academy_pathways',
+    'academy_pathway_label',
+    'academy_button',
+    'academy_notice',
+    'community_eyebrow',
+    'community_title',
+    'community_tagline',
+    'community_description',
+    'community_inner_title',
+    'community_price',
+    'community_benefits',
+    'community_rules_title',
+    'community_rules_body',
+    'community_button',
+    'final_title',
+    'final_description',
+    'final_button',
+  ] as const
 
-  const skillPathways = [
-    { title: 'AI & Prompt Engineering', description: 'Practice-based modules, project exercises and an appropriate level of support.' },
-    { title: 'Websites, Landing Pages & Funnels', description: 'Practice-based modules, project exercises and an appropriate level of support.' },
-    { title: 'Email Marketing & Customer Communication', description: 'Practice-based modules, project exercises and an appropriate level of support.' },
-    { title: 'Brand Strategy, Graphic Design & Content', description: 'Practice-based modules, project exercises and an appropriate level of support.' },
-  ]
+  const textValues = await Promise.all(textKeys.map((key) => getPageText('talent', key)))
+  const t = Object.fromEntries(textKeys.map((key, index) => [key, textValues[index]])) as Record<
+    (typeof textKeys)[number],
+    string
+  >
+
+  const journey = parseTextRows(t.journey_steps).map((row, index) => ({
+    step: String(index + 1),
+    title: row[0] ?? '',
+    description: row[1] ?? '',
+  }))
+
+  const programs = parseTextRows(t.programs_items).map((row) => ({
+    title: row[0] ?? '',
+    description: row[1] ?? '',
+    href: row[2] || '#',
+  }))
+
+  const skillPathways = parseTextRows(t.academy_pathways).map((row) => ({
+    title: row[0] ?? '',
+    description: row[1] ?? '',
+  }))
+
+  const communityBenefits = parseTextLines(t.community_benefits)
 
   return (
     <>
@@ -45,39 +88,37 @@ export default function TalentPage() {
                 className="text-xs font-bold tracking-[0.15em] uppercase text-[#1F99ED] mb-5"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                TALENT ECOSYSTEM
+                {t.hero_eyebrow}
               </p>
               <h1
                 className="text-[2.5rem] md:text-[3.5rem] font-bold text-[#10183F] mb-5 leading-tight"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
-                TALENT &amp; LEARNING
+                {t.hero_title}
               </h1>
               <p
                 className="text-xl text-[#2E3192] font-semibold mb-5"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                Build skills. Show work. Discover opportunities.
+                {t.hero_tagline}
               </p>
               <p
                 className="text-lg text-gray-600 leading-relaxed mb-8"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                Courses, career discovery, mentorship, portfolios, entrepreneurship and community
-                within one clear learner journey.
+                {t.hero_description}
               </p>
               <Button href="#academy" variant="primary" size="lg">
-                Explore Programs →
+                {t.hero_button}
               </Button>
             </div>
             <div className="relative rounded-[5px] overflow-hidden shadow-[0_8px_40px_0_rgba(31,153,237,0.15)]">
-              <Image
-                src="/images/workshop.png"
-                alt="ONEFOCUS AFRICA learning workshop"
+              <CmsMedia
+                block={heroMedia}
                 width={700}
                 height={520}
-                className="w-full h-auto object-cover"
                 priority
+                className="w-full h-auto object-cover"
               />
             </div>
           </div>
@@ -92,13 +133,13 @@ export default function TalentPage() {
               className="text-[2rem] md:text-[2.75rem] font-bold text-[#10183F] mb-3 leading-tight"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
-              THE ONEFOCUS JOURNEY
+              {t.journey_title}
             </h2>
             <p
               className="text-lg text-gray-600"
               style={{ fontFamily: 'var(--font-body)' }}
             >
-              From potential to demonstrable skills.
+              {t.journey_subtitle}
             </p>
           </div>
 
@@ -143,19 +184,19 @@ export default function TalentPage() {
                 className="text-xs font-bold tracking-[0.15em] uppercase text-[#1F99ED] mb-4"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                OUR PROGRAMS
+                {t.programs_eyebrow}
               </p>
               <h2
                 className="text-[2rem] md:text-[2.75rem] font-bold text-[#10183F] mb-3"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
-                PROGRAMS
+                {t.programs_title}
               </h2>
               <p
                 className="text-lg text-gray-600 mb-8"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                Each initiative has a clear role.
+                {t.programs_description}
               </p>
               <div className="grid sm:grid-cols-2 gap-4">
                 {programs.map((program) => (
@@ -164,7 +205,6 @@ export default function TalentPage() {
                     href={program.href}
                     className="group bg-white rounded-[5px] shadow-[0_2px_12px_0_rgba(31,153,237,0.08)] p-5 transition-all duration-200 hover:shadow-[0_6px_28px_0_rgba(31,153,237,0.16)] hover:-translate-y-1 border border-transparent hover:border-[#1F99ED]/20 block"
                   >
-                    <div className="text-2xl text-[#1F99ED] mb-3" aria-hidden="true">{program.icon}</div>
                     <h3
                       className="text-sm font-semibold text-[#10183F] mb-1"
                       style={{ fontFamily: 'var(--font-body)' }}
@@ -182,9 +222,8 @@ export default function TalentPage() {
               </div>
             </div>
             <div className="relative rounded-[5px] overflow-hidden shadow-[0_8px_40px_0_rgba(31,153,237,0.12)] lg:sticky lg:top-24">
-              <Image
-                src="/images/podcast.webp"
-                alt="ONEFOCUS AFRICA programs in action"
+              <CmsMedia
+                block={programMedia}
                 width={600}
                 height={600}
                 className="w-full h-auto object-cover"
@@ -202,26 +241,25 @@ export default function TalentPage() {
               className="text-xs font-bold tracking-[0.15em] uppercase text-[#1F99ED] mb-4"
               style={{ fontFamily: 'var(--font-body)' }}
             >
-              SKILLS TRAINING
+              {t.academy_eyebrow}
             </p>
             <h2
               className="text-[2rem] md:text-[2.75rem] font-bold text-[#10183F] mb-3"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
-              LEARNING ACADEMY
+              {t.academy_title}
             </h2>
             <p
               className="text-lg font-semibold text-[#2E3192] mb-3"
               style={{ fontFamily: 'var(--font-body)' }}
             >
-              Learn something useful. Build something real.
+              {t.academy_tagline}
             </p>
             <p
               className="text-gray-600 max-w-xl mx-auto"
               style={{ fontFamily: 'var(--font-body)' }}
             >
-              Explore training areas. Enrollment, pricing and certification should reflect
-              verified current availability.
+              {t.academy_description}
             </p>
           </div>
 
@@ -235,7 +273,7 @@ export default function TalentPage() {
                   className="text-xs font-bold uppercase tracking-widest text-[#2E3192] mb-2"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
-                  SKILL PATHWAY {index + 1}
+                  {t.academy_pathway_label} {index + 1}
                 </p>
                 <h3
                   className="text-lg font-semibold text-[#10183F] mb-3"
@@ -249,8 +287,8 @@ export default function TalentPage() {
                 >
                   {pathway.description}
                 </p>
-                <Button href="/contact" variant="outline" size="sm" className="w-full">
-                  Ask About Training →
+                <Button href="/contact?intent=TRAINING&subject=Corporate%20training" variant="outline" size="sm" className="w-full">
+                  {t.academy_button}
                 </Button>
               </div>
             ))}
@@ -261,8 +299,7 @@ export default function TalentPage() {
               className="text-sm text-gray-700 text-center"
               style={{ fontFamily: 'var(--font-body)' }}
             >
-              ⚠ Do not claim all courses are open, accredited, certified or available before
-              confirming the current program schedule.
+              {t.academy_notice}
             </p>
           </div>
         </div>
@@ -277,26 +314,25 @@ export default function TalentPage() {
                 className="text-xs font-bold tracking-[0.15em] uppercase text-[#1F99ED] mb-4"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                COMMUNITY
+                {t.community_eyebrow}
               </p>
               <h2
                 className="text-[2rem] md:text-[2.75rem] font-bold mb-4"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
-                ONEFOCUS COMMUNITY
+                {t.community_title}
               </h2>
               <p
                 className="text-lg text-gray-300 mb-3"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                Learn and build alongside people with purpose.
+                {t.community_tagline}
               </p>
               <p
                 className="text-gray-400 mb-8"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                A private learning and peer-support community for creators, freelancers,
-                entrepreneurs and professionals.
+                {t.community_description}
               </p>
 
               <div className="bg-white/10 p-6 md:p-8 rounded-[5px] border border-white/10 mb-6">
@@ -304,33 +340,28 @@ export default function TalentPage() {
                   className="text-xl font-bold mb-3"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
-                  1FOCUS VIP INNER CIRCLE
+                  {t.community_inner_title}
                 </h3>
                 <p
                   className="text-3xl font-bold text-[#1F99ED] mb-4"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
-                  One-time joining fee: $2
+                  {t.community_price}
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3 text-left mb-6">
-                  {[
-                    'Practical AI and digital discussions',
-                    'Shared learning resources',
-                    'Networking and peer support',
-                    'Information on confirmed sessions',
-                  ].map((item) => (
+                  {communityBenefits.map((item) => (
                     <div
                       key={item}
                       className="flex items-start gap-2 text-sm text-gray-300"
                       style={{ fontFamily: 'var(--font-body)' }}
                     >
-                      <span className="text-[#1F99ED] font-bold mt-0.5" aria-hidden="true">✓</span>
+                      <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#1F99ED]" aria-hidden="true" />
                       {item}
                     </div>
                   ))}
                 </div>
-                <Button href="/contact" variant="primary" size="lg">
-                  Ask How to Join →
+                <Button href="/contact?intent=COMMUNITY&subject=Talent%20community" variant="primary" size="lg">
+                  {t.community_button}
                 </Button>
               </div>
 
@@ -339,22 +370,20 @@ export default function TalentPage() {
                   className="font-bold mb-2 text-[#10183F]"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
-                  COMMUNITY RULES
+                  {t.community_rules_title}
                 </h4>
                 <p
                   className="text-sm text-gray-700"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
-                  Privacy, respect and useful learning. No spam, unauthorized private outreach or
-                  income guarantees.
+                  {t.community_rules_body}
                 </p>
               </div>
             </div>
 
             <div className="relative rounded-[5px] overflow-hidden shadow-[0_8px_40px_0_rgba(0,0,0,0.35)]">
-              <Image
-                src="/images/team.webp"
-                alt="ONEFOCUS AFRICA community and team"
+              <CmsMedia
+                block={communityMedia}
                 width={600}
                 height={700}
                 className="w-full h-auto object-cover"
@@ -372,16 +401,16 @@ export default function TalentPage() {
             className="text-[2rem] md:text-[2.5rem] font-bold text-[#10183F] mb-5"
             style={{ fontFamily: 'var(--font-heading)' }}
           >
-            Ready to start your learning journey?
+            {t.final_title}
           </h2>
           <p
             className="text-lg text-gray-600 mb-8"
             style={{ fontFamily: 'var(--font-body)' }}
           >
-            Tell us about your goals and we&apos;ll help you find the right pathway.
+            {t.final_description}
           </p>
-          <Button href="/contact" variant="primary" size="lg">
-            Get Started →
+          <Button href="/contact?intent=TRAINING&subject=Corporate%20training" variant="primary" size="lg">
+            {t.final_button}
           </Button>
         </div>
       </Section>

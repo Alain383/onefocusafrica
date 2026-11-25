@@ -41,7 +41,7 @@ export default function CTASection() {
           </p>
           {/* White button on gradient — high contrast, 5px radius */}
           <Link
-            href="/contact"
+            href="/contact?intent=PROJECT"
             className="inline-flex items-center justify-center font-semibold bg-white text-[#10183F] hover:bg-[#EEF6FD] px-10 py-4 rounded-[5px] text-lg transition-all duration-200 shadow-[0_4px_20px_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_28px_0_rgba(0,0,0,0.2)] hover:-translate-y-0.5"
             style={{ fontFamily: 'var(--font-body)' }}
           >

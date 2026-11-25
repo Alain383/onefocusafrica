@@ -13,6 +13,7 @@ type Inquiry = {
   country: string | null
   website: string | null
   serviceArea: string
+  category: string
   challenge: string
   objective: string | null
   timeline: string | null
@@ -66,6 +67,7 @@ export default function InquiryDetailClient({ inquiry }: Props) {
               ['Industry', inquiry.industry],
               ['Country', inquiry.country],
               ['Website', inquiry.website],
+              ['Category', inquiry.category],
               ['Service Area', inquiry.serviceArea],
               ['Timeline', inquiry.timeline],
             ].map(([label, value]) => value ? (

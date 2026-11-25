@@ -175,7 +175,7 @@ export default function WorkPage() {
                     <p><strong className="text-[#10183F]">Outcome:</strong> {study.details.outcome}</p>
                   </div>
 
-                  <Button href="/contact" variant="outline" size="sm" className="w-full">
+                  <Button href="/contact?intent=WORK" variant="outline" size="sm" className="w-full">
                     Ask About Similar Projects
                   </Button>
                 </div>
@@ -291,7 +291,7 @@ export default function WorkPage() {
           >
             Tell us about your challenge and we&apos;ll help define a practical project scope.
           </p>
-          <Button href="/contact" variant="primary" size="lg">
+          <Button href="/contact?intent=PROJECT" variant="primary" size="lg">
             Start a Project →
           </Button>
         </div>

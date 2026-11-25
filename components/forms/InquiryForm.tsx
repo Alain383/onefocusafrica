@@ -11,13 +11,16 @@ const inputBase =
 const labelBase =
   'block text-xs font-bold uppercase tracking-widest text-[#10183F] mb-2'
 
-export default function InquiryForm() {
+export type InquiryCategory = 'PROJECT' | 'WORK' | 'TRAINING' | 'COMMUNITY' | 'GENERAL'
+
+export default function InquiryForm({ category = 'GENERAL' }: { category?: InquiryCategory }) {
   const [formData, setFormData] = useState({
     fullName: '',
     workEmail: '',
     company: '',
     website: '',
     serviceArea: '',
+    category,
     challenge: '',
     objective: '',
     consent: false,
@@ -69,6 +72,7 @@ export default function InquiryForm() {
           company: '',
           website: '',
           serviceArea: '',
+          category,
           challenge: '',
           objective: '',
           consent: false,

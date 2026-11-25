@@ -6,8 +6,17 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum InquiryCategory {
+  PROJECT
+  WORK
+  TRAINING
+  COMMUNITY
+  GENERAL
 }
 
 model Inquiry {
@@ -19,19 +28,21 @@ model Inquiry {
   country     String?  @db.VarChar(100)
   website     String?  @db.VarChar(500)
   serviceArea String   @db.VarChar(100) // Brand, Cinematic, Web, Corporate, Talent
+  category    InquiryCategory @default(GENERAL)
   challenge   String   @db.Text
   objective   String?  @db.Text
   timeline    String?  @db.VarChar(100)
   consent     Boolean  @default(false)
   status      String   @default("new") @db.VarChar(50) // new, contacted, qualified, proposal, closed
   source      String   @default("website") @db.VarChar(100) // website, referral, etc
-  assignedTo   String?  @db.Uuid
+  assignedTo   String?  @db.VarChar(255)
   notes        String?  @db.Text
   followUpDate DateTime? @db.Timestamptz(3)
   createdAt   DateTime @default(now()) @db.Timestamptz(3)
   updatedAt   DateTime @updatedAt @db.Timestamptz(3)
 
   @@index([status])
+  @@index([category])
   @@index([createdAt])
 }
 
@@ -165,7 +176,7 @@ model MediaAsset {
   id            String    @id @default(uuid()) @db.Uuid
   filename      String    @db.VarChar(500)
   originalName  String    @db.VarChar(500)
-  url           String    @db.VarChar(1000)
+  url           String   @unique @db.VarChar(1000)
   mimeType      String    @db.VarChar(100)
   size          Int
   uploadedById  String    @db.Uuid
@@ -174,6 +185,19 @@ model MediaAsset {
 
   @@index([uploadedById])
   @@index([mimeType])
+}
+
+model GalleryItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String?  @db.VarChar(255)
+  description String?  @db.Text
+  image       String   @db.Text
+  sortOrder   Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([isPublished, sortOrder])
 }
 
 model SiteContent {
@@ -223,6 +247,70 @@ model TeamMember {
   roleTitle String   @db.VarChar(255)
   bio       String?  @db.Text
   photo     String?  @db.VarChar(1000)
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+model Service {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String   @db.VarChar(255)
+  slug        String   @unique @db.VarChar(255)
+  tagline     String?  @db.VarChar(500)
+  description String   @db.Text
+  icon        String?  @db.VarChar(100)
+  features    String   @db.Text // JSON array of strings
+  image       String?  @db.VarChar(1000)
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+model Testimonial {
+  id        String   @id @default(uuid()) @db.Uuid
+  quote     String   @db.Text
+  author    String   @db.VarChar(255)
+  role      String?  @db.VarChar(255)
+  company   String?  @db.VarChar(255)
+  photo     String?  @db.VarChar(1000)
+  rating    Int      @default(5)
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+model Faq {
+  id        String   @id @default(uuid()) @db.Uuid
+  question  String   @db.Text
+  answer    String   @db.Text
+  category  String?  @db.VarChar(100)
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([isActive])
+  @@index([category])
+  @@index([sortOrder])
+}
+
+model Partner {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(255)
+  logo      String?  @db.VarChar(1000)
+  website   String?  @db.VarChar(1000)
   sortOrder Int      @default(0)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now()) @db.Timestamptz(3)

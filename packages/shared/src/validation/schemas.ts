@@ -1,5 +1,9 @@
 import { z } from 'zod'
 
+export const inquiryCategories = ['PROJECT', 'WORK', 'TRAINING', 'COMMUNITY', 'GENERAL'] as const
+
+export const inquiryCategorySchema = z.enum(inquiryCategories)
+
 export const inquirySchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters'),
   workEmail: z.string().email('Please provide a valid email address'),
@@ -15,6 +19,7 @@ export const inquirySchema = z.object({
     'Talent, community or partnerships',
     'Not sure yet',
   ]),
+  category: inquiryCategorySchema.default('GENERAL'),
   challenge: z.string().min(20, 'Please provide more details about your challenge'),
   objective: z.string().optional(),
   timeline: z.string().optional(),

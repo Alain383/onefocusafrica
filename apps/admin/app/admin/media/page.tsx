@@ -15,8 +15,9 @@ export default async function MediaLibraryPage() {
   return (
     <div>
       <PageHeader
-        title="Media Library"
-        breadcrumbs={[{ label: 'Admin', href: '/admin' }, { label: 'Media' }]}
+        title="Uploaded files"
+        description="Files stored for reuse. Uploading here alone does not change any page; pick a file in Site images or a blog post."
+        breadcrumbs={[{ label: 'Admin', href: '/admin' }, { label: 'Uploaded files' }]}
       />
 
       {/* Upload area */}

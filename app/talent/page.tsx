@@ -249,7 +249,7 @@ export default function TalentPage() {
                 >
                   {pathway.description}
                 </p>
-                <Button href="/contact" variant="outline" size="sm" className="w-full">
+                <Button href="/contact?intent=TRAINING" variant="outline" size="sm" className="w-full">
                   Ask About Training →
                 </Button>
               </div>
@@ -329,7 +329,7 @@ export default function TalentPage() {
                     </div>
                   ))}
                 </div>
-                <Button href="/contact" variant="primary" size="lg">
+                <Button href="/contact?intent=COMMUNITY" variant="primary" size="lg">
                   Ask How to Join →
                 </Button>
               </div>
@@ -380,7 +380,7 @@ export default function TalentPage() {
           >
             Tell us about your goals and we&apos;ll help you find the right pathway.
           </p>
-          <Button href="/contact" variant="primary" size="lg">
+          <Button href="/contact?intent=TRAINING" variant="primary" size="lg">
             Get Started →
           </Button>
         </div>

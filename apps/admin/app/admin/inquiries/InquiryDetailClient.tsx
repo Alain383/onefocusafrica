@@ -13,6 +13,7 @@ type Inquiry = {
   country: string | null
   website: string | null
   serviceArea: string
+  category: string
   challenge: string
   objective: string | null
   timeline: string | null
@@ -66,6 +67,7 @@ export default function InquiryDetailClient({ inquiry }: Props) {
               ['Industry', inquiry.industry],
               ['Country', inquiry.country],
               ['Website', inquiry.website],
+              ['Category', inquiry.category],
               ['Service Area', inquiry.serviceArea],
               ['Timeline', inquiry.timeline],
             ].map(([label, value]) => value ? (
@@ -122,7 +124,7 @@ export default function InquiryDetailClient({ inquiry }: Props) {
 
           <button onClick={handleSave} disabled={isPending}
             className="w-full bg-[#1F99ED] text-white py-2.5 rounded-lg text-sm font-medium hover:bg-[#1a87d4] disabled:opacity-60 transition-colors">
-            {saved ? 'Saved ✓' : isPending ? 'Saving…' : 'Save Changes'}
+            {saved ? 'Saved' : isPending ? 'Saving…' : 'Save Changes'}
           </button>
         </div>
       </div>

@@ -155,7 +155,7 @@ export default function CoverImageUploader({
       {/* Success message */}
       {!uploading && progress === 100 && !error && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-600">
-          ✓ Image uploaded successfully
+          Image uploaded successfully
         </div>
       )}
 

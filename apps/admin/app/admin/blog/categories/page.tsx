@@ -15,7 +15,8 @@ export default async function CategoriesPage() {
   return (
     <div>
       <PageHeader
-        title="Categories & Tags"
+        title="Blog categories & tags"
+        description="Filter chips shown above posts on the public /blog page."
         breadcrumbs={[
           { label: 'Admin', href: '/admin' },
           { label: 'Blog', href: '/admin/blog' },

@@ -12,6 +12,7 @@ export * from './validation/schemas'
 export * from './utils/slug'
 export * from './utils/sanitize'
 export * from './utils/email'
+export * from './media'
 
 // Types (will be added as needed)
 // export * from './types'

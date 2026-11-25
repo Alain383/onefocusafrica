@@ -2,33 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
-   ONEFOCUS AFRICA Ã¢â‚¬â€ Brand Design System
-   Colors, Typography & Spacing per Brand Guidelines v1.0
-   Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
-
 :root {
-  /* Brand Colors (Brand Guidelines, p.21) */
-  --color-picton-blue: #1F99ED;    /* Innovation, creativity, technology, trust */
-  --color-persian-blue: #2E3192;   /* Strength, premium quality, professionalism */
-  --color-black: #000000;          /* Authority, contrast, elegance */
-  --color-white: #FFFFFF;          /* Simplicity, cleanliness, openness */
-
-  /* Semantic aliases */
+  --color-picton-blue: #1F99ED;
+  --color-persian-blue: #2E3192;
+  --color-black: #000000;
+  --color-white: #FFFFFF;
   --color-primary-blue: #1F99ED;
   --color-primary-purple: #2E3192;
   --color-primary-dark: #10183F;
   --color-primary-light: #EEF6FD;
-
-  /* Typography */
-  --font-heading: var(--font-heading);  /* Rowdies */
-  --font-body: var(--font-body);        /* Poppins */
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Base Reset Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -39,8 +28,6 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Body Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
-/* Poppins Regular 16-18px for body text (Brand Guidelines typography hierarchy) */
 body {
   font-family: var(--font-body), system-ui, -apple-system, sans-serif;
   font-size: 1rem;
@@ -50,48 +37,46 @@ body {
   color: #1a1a1a;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Headings Ã¢â‚¬â€ Rowdies typeface (Brand Guidelines p.23) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading), system-ui, sans-serif;
   line-height: 1.15;
   color: #10183F;
 }
 
-/* Typography hierarchy from Brand Guidelines p.25 */
-/* Main Heading Ã¢â‚¬â€ Rowdies Bold 48-64px */
 h1 {
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 700;
 }
 
-/* Section Heading Ã¢â‚¬â€ Rowdies Bold 36-48px */
 h2 {
   font-size: clamp(2rem, 3.5vw, 3rem);
   font-weight: 700;
 }
 
-/* Subheading Ã¢â‚¬â€ Poppins SemiBold 24-32px */
 h3 {
   font-family: var(--font-body), system-ui, sans-serif;
   font-size: clamp(1.5rem, 2.5vw, 2rem);
   font-weight: 600;
 }
 
-/* Small Heading Ã¢â‚¬â€ Poppins Medium 20-24px */
 h4 {
   font-family: var(--font-body), system-ui, sans-serif;
   font-size: clamp(1.25rem, 2vw, 1.5rem);
   font-weight: 500;
 }
 
-/* Body Text Ã¢â‚¬â€ Poppins Regular 16-18px */
-h5, h6 {
+h5,
+h6 {
   font-family: var(--font-body), system-ui, sans-serif;
   font-size: 1rem;
   font-weight: 600;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Links Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 a {
   color: var(--color-picton-blue);
   text-decoration: none;
@@ -102,32 +87,47 @@ a:hover {
   color: var(--color-persian-blue);
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Brand utility classes Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 
-  /* Picton Blue Ã¢â‚¬â€ titles, buttons, highlights, links, icons (Brand Guidelines p.22) */
-  .text-picton-blue { color: var(--color-picton-blue); }
-  .text-persian-blue { color: var(--color-persian-blue); }
-  .bg-picton-blue { background-color: var(--color-picton-blue); }
-  .bg-persian-blue { background-color: var(--color-persian-blue); }
+  .text-picton-blue {
+    color: var(--color-picton-blue);
+  }
 
-  /* Brand section backgrounds */
-  .bg-brand-light { background-color: #EEF6FD; }
-  .bg-brand-dark  { background-color: #10183F; }
+  .text-persian-blue {
+    color: var(--color-persian-blue);
+  }
 
-  /* Rowdies heading utility */
-  .font-rowdies { font-family: var(--font-heading), system-ui, sans-serif; }
-  .font-poppins { font-family: var(--font-body), system-ui, sans-serif; }
+  .bg-picton-blue {
+    background-color: var(--color-picton-blue);
+  }
 
-  /* Gradient from Picton Blue to Persian Blue (brand accent) */
+  .bg-persian-blue {
+    background-color: var(--color-persian-blue);
+  }
+
+  .bg-brand-light {
+    background-color: #EEF6FD;
+  }
+
+  .bg-brand-dark {
+    background-color: #10183F;
+  }
+
+  .font-rowdies {
+    font-family: var(--font-heading), system-ui, sans-serif;
+  }
+
+  .font-poppins {
+    font-family: var(--font-body), system-ui, sans-serif;
+  }
+
   .bg-brand-gradient {
     background: linear-gradient(135deg, var(--color-picton-blue) 0%, var(--color-persian-blue) 100%);
   }
 
-  /* Subtle blue wave background pattern (nods to brand guideline wave motif) */
   .bg-wave-pattern {
     background-color: var(--color-white);
     background-image:
@@ -136,9 +136,7 @@ a:hover {
   }
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Component layer Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 @layer components {
-  /* Brand heading style */
   .heading-xl {
     font-family: var(--font-heading), system-ui, sans-serif;
     font-weight: 700;
@@ -163,7 +161,6 @@ a:hover {
     color: #10183F;
   }
 
-  /* Body text styles */
   .body-lg {
     font-family: var(--font-body), system-ui, sans-serif;
     font-size: 1.125rem;
@@ -178,7 +175,6 @@ a:hover {
     color: #6B7280;
   }
 
-  /* Brand tag / label */
   .brand-tag {
     display: inline-block;
     font-family: var(--font-body), system-ui, sans-serif;
@@ -189,7 +185,6 @@ a:hover {
     color: var(--color-picton-blue);
   }
 
-  /* Brand card Ã¢â‚¬â€ 5px border-radius per guidelines */
   .brand-card {
     background: var(--color-white);
     border-radius: 5px;
@@ -203,7 +198,6 @@ a:hover {
     transform: translateY(-2px);
   }
 
-  /* Blue accent divider line (from brand wave identity) */
   .brand-divider {
     width: 3rem;
     height: 3px;
@@ -212,7 +206,6 @@ a:hover {
   }
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Animations Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -226,7 +219,7 @@ a:hover {
 
 @keyframes fadeIn {
   from { opacity: 0; }
-  to   { opacity: 1; }
+  to { opacity: 1; }
 }
 
 .animate-fade-in {
@@ -237,7 +230,6 @@ a:hover {
   animation: fadeIn 0.5s ease-out forwards;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Accessibility Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -256,26 +248,32 @@ a:hover {
   border-radius: 3px;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Form elements Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
-input, textarea, select {
-  border-radius: 5px; /* Brand guideline: 5px border-radius on boxes */
+input,
+textarea,
+select {
+  border-radius: 5px;
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Scrollbar (brand colors) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: #EEF6FD;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--color-picton-blue);
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-persian-blue);
 }

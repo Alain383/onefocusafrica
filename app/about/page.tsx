@@ -117,7 +117,7 @@ export default function AboutPage() {
                   follow-up all work together — not in isolation.
                 </p>
               </div>
-              <Button href="/contact" variant="primary" size="lg">
+              <Button href="/contact?intent=GENERAL" variant="primary" size="lg">
                 Work With Us →
               </Button>
             </div>
@@ -257,7 +257,7 @@ export default function AboutPage() {
                   </a>
                 </p>
               </div>
-              <Button href="/contact" variant="primary" size="lg">
+              <Button href="/contact?intent=GENERAL" variant="primary" size="lg">
                 Get in Touch →
               </Button>
             </div>

@@ -45,7 +45,7 @@ export default function TalentEcosystem() {
             mentorship, community and practical projects.
           </p>
           <Button href="/talent" variant="primary" size="lg">
-            Explore Talent &amp; Learning →
+            Explore Talent &amp; Learning
           </Button>
         </div>
 
@@ -124,7 +124,7 @@ export default function TalentEcosystem() {
               className="flex items-start gap-2 text-sm text-gray-300"
               style={{ fontFamily: 'var(--font-body)' }}
             >
-              <span className="text-[#1F99ED] font-bold mt-0.5" aria-hidden="true">✓</span>
+              <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#1F99ED]" aria-hidden="true" />
               {item}
             </li>
           ))}
@@ -135,7 +135,7 @@ export default function TalentEcosystem() {
           className="inline-block bg-white text-[#10183F] px-8 py-3 rounded-[5px] font-semibold hover:bg-[#EEF6FD] transition-colors text-base"
           style={{ fontFamily: 'var(--font-body)' }}
         >
-          Ask How to Join →
+          Ask How to Join
         </Link>
       </div>
     </Section>

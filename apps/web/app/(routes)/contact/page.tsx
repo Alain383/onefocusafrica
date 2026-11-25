@@ -1,171 +1,321 @@
-﻿import Section from '@/components/ui/Section'
-import Image from 'next/image'
+﻿import type { ReactNode } from 'react'
+import Section from '@/components/ui/Section'
+import CmsMedia from '@/components/CmsMedia'
+import ContactIcon, { type ContactIconName } from '@/components/ui/ContactIcon'
 import InquiryForm from '@/components/forms/InquiryForm'
+import { getMediaBlock, getPageText } from '@/lib/site-content'
+import { toInquiryCategory } from '@/lib/inquiry-category'
+import { inquiryContext } from '@/lib/inquiry-context'
 
 export const metadata = {
   title: 'Contact Us | ONEFOCUS AFRICA',
   description:
-    "Get in touch with ONEFOCUS AFRICA. Tell us about your business challenge and we'll help you find the right solution.",
+    'Contact ONEFOCUS AFRICA in Nyarugenge, Kigali, Rwanda. Send an inquiry and our team will respond within 1–2 business days.',
 }
 
-export default function ContactPage() {
+function DetailItem({
+  icon,
+  label,
+  children,
+}: {
+  icon: ContactIconName
+  label: string
+  children: ReactNode
+}) {
+  return (
+    <div className="flex gap-4">
+      <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-white/10 text-[#1F99ED]">
+        <ContactIcon name={icon} className="h-5 w-5" />
+      </span>
+      <div className="min-w-0">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/50">
+          {label}
+        </p>
+        <div className="mt-1 text-sm font-medium leading-relaxed text-white">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ intent?: string; subject?: string }>
+}) {
+  const { intent, subject } = await searchParams
+  const category = toInquiryCategory(intent)
+  const context = inquiryContext[category]
+
+  const textKeys = [
+    'hero_title',
+    'hero_subtitle',
+    'form_description',
+    'location_eyebrow',
+    'location_title',
+    'location_description',
+    'location_address',
+    'location_directions',
+  ] as const
+  const textValues = await Promise.all(textKeys.map((key) => getPageText('contact', key)))
+  const t = Object.fromEntries(textKeys.map((key, index) => [key, textValues[index]])) as Record<
+    (typeof textKeys)[number],
+    string
+  >
+
+  const formDescription = category === 'GENERAL' ? t.form_description : context.description
+  const heroMedia = await getMediaBlock('contact.hero')
+  const mapQuery = encodeURIComponent(t.location_address)
+  const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`
+
   return (
     <>
-      {/* ── Hero banner ── */}
-      <div className="relative h-[260px] sm:h-[320px] md:h-[380px] overflow-hidden">
-        <Image
-          src="/images/personal.png"
-          alt="ONEFOCUS AFRICA contact"
-          fill
-          className="object-cover object-top"
+      <div className="relative min-h-[320px] overflow-hidden md:min-h-[420px]">
+        <CmsMedia
+          block={heroMedia}
           priority
           sizes="100vw"
-          quality={80}
+          className="absolute inset-0 h-full w-full object-cover object-top"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#10183F]/70 via-[#10183F]/40 to-[#10183F]/80" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-          <p
-            className="text-xs font-bold tracking-[0.15em] uppercase text-[#1F99ED] mb-3"
-            style={{ fontFamily: 'var(--font-body)' }}
-          >
-            GET IN TOUCH
-          </p>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#10183F]/90 via-[#10183F]/70 to-[#1F99ED]/40" />
+        <div className="relative mx-auto flex min-h-[320px] max-w-7xl flex-col justify-end px-4 pb-12 sm:px-6 md:min-h-[420px] md:pb-16 lg:px-8">
+          <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#1F99ED]" />
+            Get in touch
+          </span>
           <h1
-            className="text-[2rem] md:text-[3.25rem] font-bold text-white mb-3 leading-tight"
+            className="max-w-3xl text-[2.25rem] font-bold leading-tight text-white md:text-[3.5rem]"
             style={{ fontFamily: 'var(--font-heading)' }}
           >
-            Let&apos;s discuss your next move.
+            {t.hero_title}
           </h1>
           <p
-            className="text-lg text-white/80 max-w-xl"
+            className="mt-4 max-w-2xl text-lg text-white/80"
             style={{ fontFamily: 'var(--font-body)' }}
           >
-            Based in Kigali, Rwanda. Serving businesses across Africa.
+            {t.hero_subtitle}
           </p>
         </div>
       </div>
 
-      <Section background="white" padding="lg">
-        {/* ── Contact info box ── */}
-        <div className="max-w-2xl mx-auto mb-14">
-          <div className="bg-[#EEF6FD] p-8 rounded-[5px]">
+      <Section background="light" padding="lg">
+        <div className="grid gap-8 lg:grid-cols-12 lg:gap-10">
+          <aside className="lg:col-span-4">
+            <div className="h-full rounded-[5px] bg-[#10183F] p-7 shadow-[0_12px_40px_rgba(16,24,63,0.16)] sm:p-8">
+              <p
+                className="text-xs font-bold uppercase tracking-[0.16em] text-[#1F99ED]"
+                style={{ fontFamily: 'var(--font-body)' }}
+              >
+                Contact details
+              </p>
+              <h2
+                className="mt-3 text-2xl font-bold text-white"
+                style={{ fontFamily: 'var(--font-heading)' }}
+              >
+                Talk to our team
+              </h2>
+              <p
+                className="mt-3 text-sm leading-relaxed text-white/60"
+                style={{ fontFamily: 'var(--font-body)' }}
+              >
+                Choose the channel that works for you. Clear context helps us respond with a useful
+                next step.
+              </p>
+
+              <div className="mt-8 space-y-6" style={{ fontFamily: 'var(--font-body)' }}>
+                <DetailItem icon="mail" label="Email">
+                  <a
+                    href="mailto:onefocusafrica@gmail.com"
+                    className="break-all transition-colors hover:text-[#1F99ED]"
+                  >
+                    onefocusafrica@gmail.com
+                  </a>
+                </DetailItem>
+                <DetailItem icon="phone" label="WhatsApp">
+                  <a
+                    href="https://wa.me/250781102667"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-colors hover:text-[#1F99ED]"
+                  >
+                    +250 781 102 667
+                  </a>
+                </DetailItem>
+                <DetailItem icon="pin" label="Office">
+                  <span>{t.location_address}</span>
+                </DetailItem>
+                <DetailItem icon="clock" label="Response time">
+                  <span>Within 1–2 business days</span>
+                </DetailItem>
+              </div>
+            </div>
+          </aside>
+
+          <div className="lg:col-span-8">
+            <div className="rounded-[5px] bg-white p-6 shadow-[0_2px_16px_rgba(31,153,237,0.08)] sm:p-8 md:p-10">
+              <div className="mb-8">
+                <p
+                  className="text-xs font-bold uppercase tracking-[0.16em] text-[#1F99ED]"
+                  style={{ fontFamily: 'var(--font-body)' }}
+                >
+                  {context.eyebrow}
+                </p>
+                <h2
+                  className="mt-3 text-[1.75rem] font-bold text-[#10183F] md:text-[2.25rem]"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  {context.title}
+                </h2>
+                <p
+                  className="mt-3 max-w-2xl text-base leading-relaxed text-gray-600"
+                  style={{ fontFamily: 'var(--font-body)' }}
+                >
+                  {formDescription}
+                </p>
+              </div>
+              <InquiryForm category={category} subject={subject} />
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section background="white" padding="lg" id="location">
+        <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+          <div className="lg:col-span-5">
+            <p
+              className="text-xs font-bold tracking-[0.16em] uppercase text-[#1F99ED]"
+              style={{ fontFamily: 'var(--font-body)' }}
+            >
+              {t.location_eyebrow}
+            </p>
             <h2
-              className="text-xl font-bold text-[#10183F] mb-6 text-center uppercase tracking-wide"
+              className="mt-3 text-[2rem] font-bold text-[#10183F] md:text-[2.75rem]"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
-              CONTACT ONEFOCUS
+              {t.location_title}
             </h2>
-            <div className="space-y-5 text-center">
-              <div>
-                <p
-                  className="text-xs font-bold uppercase tracking-widest text-[#2E3192] mb-1"
-                  style={{ fontFamily: 'var(--font-body)' }}
-                >
-                  Email
-                </p>
+            <p
+              className="mt-4 max-w-lg text-lg leading-relaxed text-gray-600"
+              style={{ fontFamily: 'var(--font-body)' }}
+            >
+              {t.location_description}
+            </p>
+
+            <div className="mt-8 rounded-[5px] border border-[#E7ECF3] bg-white p-6 shadow-[0_2px_12px_rgba(31,153,237,0.06)]">
+              <p
+                className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2E3192]"
+                style={{ fontFamily: 'var(--font-body)' }}
+              >
+                Head office
+              </p>
+              <p
+                className="mt-2 text-lg font-semibold leading-relaxed text-[#10183F]"
+                style={{ fontFamily: 'var(--font-body)' }}
+              >
+                {t.location_address}
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
                 <a
-                  href="mailto:onefocusafrica@gmail.com"
-                  className="text-[#1F99ED] hover:text-[#2E3192] transition-colors text-lg font-medium"
-                  style={{ fontFamily: 'var(--font-body)' }}
-                >
-                  onefocusafrica@gmail.com
-                </a>
-              </div>
-              <div className="h-px bg-[#1F99ED]/20 max-w-xs mx-auto" />
-              <div>
-                <p
-                  className="text-xs font-bold uppercase tracking-widest text-[#2E3192] mb-1"
-                  style={{ fontFamily: 'var(--font-body)' }}
-                >
-                  WhatsApp
-                </p>
-                <a
-                  href="https://wa.me/250781102667"
+                  href={directionsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#1F99ED] hover:text-[#2E3192] transition-colors text-lg font-medium"
+                  className="inline-flex items-center gap-2 rounded-[5px] bg-[#10183F] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#1F99ED]"
                   style={{ fontFamily: 'var(--font-body)' }}
                 >
-                  +250 781 102 667
+                  {t.location_directions}
+                  <ContactIcon name="arrow" className="h-4 w-4" />
+                </a>
+                <a
+                  href="mailto:onefocusafrica@gmail.com"
+                  className="inline-flex items-center gap-2 rounded-[5px] border border-[#1F99ED] px-5 py-3 text-sm font-semibold text-[#1F99ED] transition-colors hover:bg-[#EEF6FD]"
+                  style={{ fontFamily: 'var(--font-body)' }}
+                >
+                  Email us
+                  <ContactIcon name="mail" className="h-4 w-4" />
                 </a>
               </div>
             </div>
-            <p
-              className="text-xs text-gray-500 mt-6 text-center"
-              style={{ fontFamily: 'var(--font-body)' }}
-            >
-              Before going live, verify the phone and email, and publish real privacy,
-              accessibility and terms pages.
-            </p>
+          </div>
+
+          <div className="lg:col-span-7">
+            <div className="flex h-full min-h-[320px] flex-col justify-between rounded-[5px] border border-[#E7ECF3] bg-gradient-to-br from-[#EEF6FD] to-white p-8 shadow-[0_8px_32px_rgba(16,24,63,0.08)] md:min-h-[440px]">
+              <div>
+                <p
+                  className="text-xs font-bold uppercase tracking-[0.18em] text-[#1F99ED]"
+                  style={{ fontFamily: 'var(--font-body)' }}
+                >
+                  Visit us
+                </p>
+                <p
+                  className="mt-6 max-w-lg text-2xl font-bold leading-relaxed text-[#10183F] md:text-3xl"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  Nyarugenge, Timbuktoo Building, Kigali, Rwanda
+                </p>
+              </div>
+              <div className="mt-10 flex flex-wrap gap-3">
+                <a
+                  href={directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-[5px] bg-[#1F99ED] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#10183F]"
+                  style={{ fontFamily: 'var(--font-body)' }}
+                >
+                  {t.location_directions}
+                  <ContactIcon name="arrow" className="h-4 w-4" />
+                </a>
+                <a
+                  href="mailto:onefocusafrica@gmail.com"
+                  className="inline-flex items-center gap-2 rounded-[5px] border border-[#1F99ED] px-5 py-3 text-sm font-semibold text-[#1F99ED] transition-colors hover:bg-white"
+                  style={{ fontFamily: 'var(--font-body)' }}
+                >
+                  Email us
+                  <ContactIcon name="mail" className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
+      </Section>
 
-        {/* ── Inquiry form ── */}
-        <div className="mb-14">
-          <div className="text-center mb-8">
-            <p
-              className="text-xs font-bold tracking-[0.15em] uppercase text-[#1F99ED] mb-3"
-              style={{ fontFamily: 'var(--font-body)' }}
-            >
-              DISCOVERY FORM
-            </p>
-            <h2
-              className="text-[1.75rem] md:text-[2.25rem] font-bold text-[#10183F] mb-3"
-              style={{ fontFamily: 'var(--font-heading)' }}
-            >
-              BUSINESS DISCOVERY
-            </h2>
-            <p
-              className="text-lg text-gray-600 max-w-xl mx-auto"
-              style={{ fontFamily: 'var(--font-body)' }}
-            >
-              Tell us what you want to grow. A clear brief helps us recommend the right
-              engagement, realistic deliverables and responsible next steps.
-            </p>
-          </div>
-          <InquiryForm />
-        </div>
-
-        {/* ── Process box ── */}
-        <div className="max-w-3xl mx-auto mt-6">
-          <h3
-            className="text-xl md:text-2xl font-bold text-[#10183F] mb-4 text-center"
-            style={{ fontFamily: 'var(--font-heading)' }}
-          >
-            OUR SIMPLE PROCESS
-          </h3>
+      <Section background="dark" padding="lg">
+        <div className="mx-auto max-w-5xl">
           <p
-            className="text-base text-gray-600 mb-6 text-center"
+            className="text-center text-xs font-bold uppercase tracking-[0.16em] text-[#1F99ED]"
             style={{ fontFamily: 'var(--font-body)' }}
           >
-            From an idea to a scoped project.
+            Our simple process
           </p>
-          <div className="bg-white p-6 rounded-[5px] border border-[#EEF6FD] shadow-[0_2px_12px_0_rgba(31,153,237,0.07)]">
-            <ul className="space-y-4 text-gray-700" style={{ fontFamily: 'var(--font-body)' }}>
-              {[
-                'Share your business challenge',
-                'Discuss goals, timing and constraints',
-                'Receive a defined, appropriate scope',
-                'Agree deliverables, roles and next steps',
-              ].map((item, i) => (
-                <li key={item} className="flex items-start gap-3">
-                  <span
-                    className="flex-shrink-0 w-7 h-7 bg-[#1F99ED] text-white rounded-full flex items-center justify-center text-sm font-bold"
-                    aria-hidden="true"
-                  >
-                    {i + 1}
-                  </span>
-                  <span className="pt-0.5">{item}</span>
-                </li>
-              ))}
-            </ul>
-            <p
-              className="text-xs text-gray-400 mt-6 italic"
-              style={{ fontFamily: 'var(--font-body)' }}
-            >
-              No promises of guaranteed sales, leads or monthly income. Projects are quoted by scope.
-            </p>
+          <h2
+            className="mt-3 text-center text-[2rem] font-bold text-white md:text-[2.75rem]"
+            style={{ fontFamily: 'var(--font-heading)' }}
+          >
+            From an idea to a scoped project
+          </h2>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              'Share your business challenge',
+              'Discuss goals, timing and constraints',
+              'Receive a defined, appropriate scope',
+              'Agree deliverables, roles and next steps',
+            ].map((item, index) => (
+              <div
+                key={item}
+                className="rounded-[5px] border border-white/10 bg-white/5 p-5"
+                style={{ fontFamily: 'var(--font-body)' }}
+              >
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1F99ED] text-sm font-bold text-white">
+                  {index + 1}
+                </span>
+                <p className="mt-4 text-sm font-medium leading-relaxed text-white">{item}</p>
+              </div>
+            ))}
           </div>
+          <p
+            className="mt-8 text-center text-xs text-white/50"
+            style={{ fontFamily: 'var(--font-body)' }}
+          >
+            No promises of guaranteed sales, leads or monthly income. Projects are quoted by scope.
+          </p>
         </div>
       </Section>
     </>

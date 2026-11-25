@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
         country: validatedData.country,
         website: validatedData.website,
         serviceArea: validatedData.serviceArea,
+        category: validatedData.category,
         challenge: validatedData.challenge,
         objective: validatedData.objective,
         timeline: validatedData.timeline,
@@ -28,12 +29,13 @@ export async function POST(request: NextRequest) {
     })
     
     // Send notifications
-    await Promise.all([
+    await Promise.allSettled([
       sendInquiryNotification({
         fullName: validatedData.fullName,
         workEmail: validatedData.workEmail,
         company: validatedData.company,
         serviceArea: validatedData.serviceArea,
+        category: validatedData.category,
         challenge: validatedData.challenge,
         objective: validatedData.objective,
       }),

@@ -7,15 +7,19 @@ export default async function TeamPage() {
   const session = await requireAuth()
   await requireRole(session, 'ADMIN')
 
-  const [adminUsers, teamMembers] = await Promise.all([
-    prisma.adminUser.findMany({ orderBy: { createdAt: 'asc' }, select: { id: true, name: true, email: true, role: true, isActive: true, lastLoginAt: true } }),
-    prisma.teamMember.findMany({ orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }] }),
-  ])
+  const adminUsers = await prisma.adminUser.findMany({
+    orderBy: { createdAt: 'asc' },
+    select: { id: true, name: true, email: true, role: true, isActive: true, lastLoginAt: true },
+  })
 
   return (
     <div>
-      <PageHeader title="Team & Admin Users" breadcrumbs={[{ label: 'Admin', href: '/admin' }, { label: 'Team' }]} />
-      <TeamClient adminUsers={adminUsers} teamMembers={teamMembers} currentUserId={session.user.id} />
+      <PageHeader
+        title="Admin users & access"
+        description="Manage who can sign in to this admin. This does not change the About page team section."
+        breadcrumbs={[{ label: 'Admin', href: '/admin' }, { label: 'Admin users' }]}
+      />
+      <TeamClient adminUsers={adminUsers} currentUserId={session.user.id} />
     </div>
   )
 }

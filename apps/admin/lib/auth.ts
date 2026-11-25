@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
+import { after } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import type { Session } from 'next-auth'
@@ -84,9 +85,13 @@ const nextAuthResult = NextAuth({
             return null
           }
 
-          await prisma.adminUser.update({
-            where: { id: user.id },
-            data: { lastLoginAt: new Date() },
+          after(async () => {
+            await prisma.adminUser
+              .update({
+                where: { id: user.id },
+                data: { lastLoginAt: new Date() },
+              })
+              .catch(() => {})
           })
 
           clearAttempts(ip)

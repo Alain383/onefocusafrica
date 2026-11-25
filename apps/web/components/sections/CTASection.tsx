@@ -1,8 +1,17 @@
 import Link from 'next/link'
+import { getSiteContent } from '@/lib/site-content'
 
-export default function CTASection() {
+export default async function CTASection() {
+  const heading = await getSiteContent('home', 'cta_heading', "LET'S MAKE IT PRACTICAL")
+  const question = await getSiteContent('home', 'cta_question', 'What are you trying to grow?')
+  const body = await getSiteContent(
+    'home',
+    'cta_body',
+    "Tell us the challenge. We'll help define a sensible next step."
+  )
+
   return (
-    // Gradient background — Picton Blue → Persian Blue per brand guidelines
+    // Gradient background — Picton Blue to Persian Blue per brand guidelines
     <section className="relative overflow-hidden bg-gradient-to-br from-[#1F99ED] to-[#2E3192]">
       {/* Subtle wave / glow overlay from brand graphic elements */}
       <div
@@ -21,29 +30,29 @@ export default function CTASection() {
             className="text-[2rem] md:text-[3rem] lg:text-[3.5rem] font-bold mb-6 leading-tight"
             style={{ fontFamily: 'var(--font-heading)' }}
           >
-            LET&apos;S MAKE IT PRACTICAL
+            {heading}
           </h2>
           {/* Poppins SemiBold — subheading level */}
           <p
             className="text-xl md:text-2xl text-white/90 mb-4 font-semibold"
             style={{ fontFamily: 'var(--font-body)' }}
           >
-            What are you trying to grow?
+            {question}
           </p>
           {/* Poppins Regular — body text */}
           <p
             className="text-lg text-white/75 mb-10"
             style={{ fontFamily: 'var(--font-body)' }}
           >
-            Tell us the challenge. We&apos;ll help define a sensible next step.
+            {body}
           </p>
           {/* White button on gradient — high contrast, 5px radius */}
           <Link
-            href="/contact"
+            href="/contact?intent=PROJECT&subject=New%20project"
             className="inline-flex items-center justify-center font-semibold bg-white text-[#10183F] hover:bg-[#EEF6FD] px-10 py-4 rounded-[5px] text-lg transition-all duration-200 shadow-[0_4px_20px_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_28px_0_rgba(0,0,0,0.2)] hover:-translate-y-0.5"
             style={{ fontFamily: 'var(--font-body)' }}
           >
-            Start a Project →
+            Start a Project
           </Link>
         </div>
       </div>

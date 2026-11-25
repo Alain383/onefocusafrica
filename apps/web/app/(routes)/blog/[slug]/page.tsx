@@ -2,7 +2,9 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
+import { mediaFirstImage } from '@onefocus/shared'
+import CmsMedia from '@/components/CmsMedia'
+import { toMediaBlock } from '@/lib/site-content'
 import SocialShare from '@/components/blog/SocialShare'
 import BlogComments from '@/components/blog/BlogComments'
 
@@ -26,45 +28,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!post) return { title: 'Not Found' }
 
+  const coverMedia = toMediaBlock(post.coverImage, '', post.title)
+  const coverImage = mediaFirstImage(coverMedia)
+
   return {
     title: post.seoTitle ?? post.title,
     description: post.seoDescription ?? post.excerpt ?? undefined,
     openGraph: {
       title: post.seoTitle ?? post.title,
       description: post.seoDescription ?? post.excerpt ?? undefined,
-      images: post.coverImage ? [{ url: post.coverImage }] : undefined,
+      images: coverImage ? [{ url: coverImage }] : undefined,
       type: 'article',
     },
     twitter: {
       card: 'summary_large_image',
       title: post.seoTitle ?? post.title,
       description: post.seoDescription ?? post.excerpt ?? undefined,
-      images: post.coverImage ? [post.coverImage] : undefined,
+      images: coverImage ? [coverImage] : undefined,
     },
   }
 }
 
-export async function generateStaticParams() {
-  // Skip static generation during build if DATABASE_URL is not available
-  if (!process.env.DATABASE_URL) {
-    return []
-  }
-  
-  try {
-    const posts = await prisma.post.findMany({
-      where: { status: 'PUBLISHED' },
-      select: { slug: true },
-    })
-    return posts.map((p: { slug: string }) => ({ slug: p.slug }))
-  } catch (error) {
-    console.warn('Could not generate static params for blog posts:', error)
-    return []
-  }
-}
-
-// Use dynamic rendering when static params aren't available
-export const dynamic = 'auto'
-export const dynamicParams = true
+export const dynamic = 'force-dynamic'
 
 export default async function BlogArticlePage({ params }: Props) {
   const { slug } = await params
@@ -80,13 +65,15 @@ export default async function BlogArticlePage({ params }: Props) {
   if (!post) notFound()
 
   const readingTime = estimateReadingTime(post.content)
+  const coverMedia = toMediaBlock(post.coverImage, '', post.title)
+  const coverImage = mediaFirstImage(coverMedia)
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
     datePublished: post.publishedAt?.toISOString(),
-    image: post.coverImage,
+    image: coverImage || undefined,
     description: post.seoDescription ?? post.excerpt,
   }
 
@@ -147,20 +134,18 @@ export default async function BlogArticlePage({ params }: Props) {
               })}
             </span>
           )}
-          <span>·</span>
+          <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden="true" />
           <span>{readingTime} min read</span>
         </div>
 
         {/* Cover Image */}
         {post.coverImage && (
           <div className="relative mb-12 rounded-2xl overflow-hidden aspect-video shadow-lg">
-            <Image
-              src={post.coverImage}
-              alt={post.title}
-              fill
-              className="object-cover"
+            <CmsMedia
+              block={coverMedia}
               sizes="(max-width: 768px) 100vw, 896px"
               priority
+              className="object-cover"
             />
           </div>
         )}

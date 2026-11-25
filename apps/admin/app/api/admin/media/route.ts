@@ -10,6 +10,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  if (!process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN.startsWith('your_')) {
+    return NextResponse.json(
+      { error: 'BLOB_READ_WRITE_TOKEN ntabwo yashyizweho muri Vercel. Shyira token ya Vercel Blob kugira ngo upload ikore.' },
+      { status: 503 }
+    )
+  }
+
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
@@ -18,13 +25,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/gif',
+      'image/svg+xml',
+      'video/mp4',
+      'video/webm',
+      'video/quicktime',
+    ]
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: 'Only JPG, PNG, WebP, GIF, and SVG images are allowed' }, { status: 400 })
+      return NextResponse.json({ error: 'Only images and MP4, WebM or MOV videos are allowed' }, { status: 400 })
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File size must be less than 10 MB' }, { status: 400 })
+    const maxSize = file.type.startsWith('video/') ? 100 * 1024 * 1024 : 10 * 1024 * 1024
+    if (file.size > maxSize) {
+      return NextResponse.json(
+        { error: file.type.startsWith('video/') ? 'Video must be less than 100 MB' : 'Image must be less than 10 MB' },
+        { status: 400 }
+      )
     }
 
     // Upload to Vercel Blob storage

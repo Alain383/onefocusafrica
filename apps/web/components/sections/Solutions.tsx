@@ -5,25 +5,21 @@ import Card from '../ui/Card'
 export default function Solutions() {
   const solutions = [
     {
-      icon: '◉',
       title: 'Brand & Growth',
       description: 'Strategy, positioning, campaigns and customer acquisition.',
       href: '/solutions#brand',
     },
     {
-      icon: '▶',
       title: 'Cinematic Media',
       description: 'On-site tours, professional photography, video and live experiences.',
       href: '/solutions#cinematic',
     },
     {
-      icon: '⌘',
       title: 'Web & Automation',
       description: 'Conversion-focused websites, lead capture and business systems.',
       href: '/solutions#web',
     },
     {
-      icon: '✳',
       title: 'Corporate Training',
       description: 'Applied AI and digital skills for teams and institutions.',
       href: '/solutions#corporate',
@@ -54,13 +50,6 @@ export default function Solutions() {
           <Link key={solution.title} href={solution.href} className="group block">
             {/* 5px border-radius cards, hover lift */}
             <div className="bg-white rounded-[5px] shadow-[0_2px_12px_0_rgba(31,153,237,0.08)] p-6 h-full transition-all duration-200 group-hover:shadow-[0_6px_28px_0_rgba(31,153,237,0.16)] group-hover:-translate-y-1 border border-transparent group-hover:border-[#1F99ED]/20">
-              {/* Icon — large Picton Blue */}
-              <div
-                className="text-3xl text-[#1F99ED] mb-4"
-                aria-hidden="true"
-              >
-                {solution.icon}
-              </div>
               {/* Small Heading — Poppins Medium 20px */}
               <h3
                 className="text-lg font-semibold text-[#10183F] mb-2"
@@ -80,7 +69,7 @@ export default function Solutions() {
                 className="text-[#1F99ED] text-sm font-semibold group-hover:text-[#2E3192] transition-colors"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                Explore {solution.title.split(' ')[0]} →
+                Explore {solution.title.split(' ')[0]}
               </p>
             </div>
           </Link>
@@ -91,7 +80,6 @@ export default function Solutions() {
       {/* Light brand blue box — 5px radius, inner content centered */}
       <div className="mt-16 bg-[#EEF6FD] p-8 md:p-12 rounded-[5px] max-w-4xl mx-auto">
         <div className="text-center">
-          <div className="text-4xl mb-4 text-[#1F99ED]" aria-hidden="true">▶</div>
           {/* Sub-section heading — Poppins SemiBold */}
           <h3
             className="text-xl md:text-2xl font-semibold text-[#10183F] mb-3 uppercase tracking-wide"
@@ -118,7 +106,7 @@ export default function Solutions() {
             className="text-[#1F99ED] font-semibold hover:text-[#2E3192] transition-colors text-base"
             style={{ fontFamily: 'var(--font-body)' }}
           >
-            Explore Marketing Tours →
+            Explore Marketing Tours
           </Link>
         </div>
       </div>

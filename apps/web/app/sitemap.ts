@@ -9,7 +9,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: SITE_URL, lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },
     { url: `${SITE_URL}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${SITE_URL}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${SITE_URL}/services`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/solutions`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/work`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/gallery`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/talent`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${SITE_URL}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
   ]
 
@@ -33,15 +36,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }))
 
-    // Published case studies
     const caseStudies = await prisma.caseStudy.findMany({
       where: { isPublished: true },
       select: { slug: true, updatedAt: true },
     })
 
-    const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((cs) => ({
-      url: `${SITE_URL}/work/${cs.slug}`,
-      lastModified: cs.updatedAt,
+    const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((study) => ({
+      url: `${SITE_URL}/work/${study.slug}`,
+      lastModified: study.updatedAt,
       changeFrequency: 'monthly',
       priority: 0.7,
     }))

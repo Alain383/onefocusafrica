@@ -59,39 +59,39 @@ export async function savePost(
     : null
 
   try {
-    const post = await prisma.post.upsert({
-      where: { id: data.id ?? '__new__' },
-      create: {
-        title: data.title,
-        slug: finalSlug,
-        content: cleanContent,
-        excerpt: data.excerpt ?? null,
-        coverImage: data.coverImage ?? null,
-        seoTitle: data.seoTitle ?? null,
-        seoDescription: data.seoDescription ?? null,
-        status: data.status,
-        scheduledAt,
-        publishedAt: data.status === 'PUBLISHED' ? new Date() : null,
-        authorId: session.user.id,
-        categories: { connect: data.categoryIds.map((id) => ({ id })) },
-        tags: { connect: data.tagIds.map((id) => ({ id })) },
-      },
-      update: {
-        title: data.title,
-        slug: finalSlug,
-        content: cleanContent,
-        excerpt: data.excerpt ?? null,
-        coverImage: data.coverImage ?? null,
-        seoTitle: data.seoTitle ?? null,
-        seoDescription: data.seoDescription ?? null,
-        status: data.status,
-        scheduledAt,
-        ...(data.status === 'PUBLISHED' && publishedAt !== undefined ? {} : { publishedAt }),
-        categories: { set: data.categoryIds.map((id) => ({ id })) },
-        tags: { set: data.tagIds.map((id) => ({ id })) },
-      },
-      select: { id: true, slug: true },
-    })
+    const postData = {
+      title: data.title,
+      slug: finalSlug,
+      content: cleanContent,
+      excerpt: data.excerpt ?? null,
+      coverImage: data.coverImage ?? null,
+      seoTitle: data.seoTitle ?? null,
+      seoDescription: data.seoDescription ?? null,
+      status: data.status,
+      scheduledAt,
+    }
+
+    const post = isNew
+      ? await prisma.post.create({
+          data: {
+            ...postData,
+            publishedAt: data.status === 'PUBLISHED' ? new Date() : null,
+            authorId: session.user.id,
+            categories: { connect: data.categoryIds.map((id) => ({ id })) },
+            tags: { connect: data.tagIds.map((id) => ({ id })) },
+          },
+          select: { id: true, slug: true },
+        })
+      : await prisma.post.update({
+          where: { id: data.id! },
+          data: {
+            ...postData,
+            publishedAt,
+            categories: { set: data.categoryIds.map((id) => ({ id })) },
+            tags: { set: data.tagIds.map((id) => ({ id })) },
+          },
+          select: { id: true, slug: true },
+        })
 
     // Revalidate public blog pages when publishing
     if (data.status === 'PUBLISHED') {

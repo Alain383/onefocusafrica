@@ -149,7 +149,7 @@ export default function Header() {
 
           {/* ── CTA ── */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Button href="/contact" variant="primary" size="sm">
+            <Button href="/contact?intent=PROJECT" variant="primary" size="sm">
               Start a Project →
             </Button>
           </div>
@@ -187,7 +187,7 @@ export default function Header() {
               ))}
               <div className="px-3 pt-3">
                 <Button
-                  href="/contact"
+                  href="/contact?intent=PROJECT"
                   variant="primary"
                   size="md"
                   className="w-full"

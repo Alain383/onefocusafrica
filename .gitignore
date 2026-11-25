@@ -59,9 +59,7 @@ apps/*/.vercel
 next-env.d.ts
 apps/*/next-env.d.ts
 
-# prisma
-/prisma/migrations
-packages/database/prisma/migrations
+# prisma migrations are tracked so every collaborator can apply the same schema
 
 # SQLite databases (local development - NEVER commit)
 *.db

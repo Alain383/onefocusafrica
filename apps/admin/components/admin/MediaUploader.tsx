@@ -1,70 +1,84 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { upload } from '@vercel/blob/client'
+import { useCallback, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+
+const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime']
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024
+const MAX_VIDEO_SIZE = 100 * 1024 * 1024
 
 export default function MediaUploader() {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [currentFile, setCurrentFile] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
 
-  async function uploadFile(file: File) {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
-    if (!allowedTypes.includes(file.type)) {
-      setError('Only JPG, PNG, WebP, GIF, SVG images are allowed.')
+  const uploadFile = useCallback(async (file: File) => {
+    const isVideo = file.type.startsWith('video/')
+    const allowed = isVideo ? VIDEO_TYPES : IMAGE_TYPES
+    const maxSize = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE
+
+    if (!allowed.includes(file.type)) {
+      setError(isVideo ? 'Only MP4, WebM and MOV videos are allowed.' : 'Only JPG, PNG, WebP, GIF and SVG images are allowed.')
       return
     }
-    if (file.size > 10 * 1024 * 1024) {
-      setError('File size must be less than 10 MB.')
+    if (file.size > maxSize) {
+      setError(isVideo ? 'Video must be less than 100 MB.' : 'Image must be less than 10 MB.')
       return
     }
 
     setError(null)
     setSuccess(null)
+    setCurrentFile(file.name)
     setUploading(true)
     setProgress(0)
 
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setProgress((p) => Math.min(p + 15, 85))
-    }, 150)
-
     try {
-      const formData = new FormData()
-      formData.append('file', file)
+      const blob = await upload(file.name, file, {
+        access: 'public',
+        contentType: file.type,
+        handleUploadUrl: '/api/admin/media/client-upload',
+        multipart: file.size > 10 * 1024 * 1024,
+        clientPayload: JSON.stringify({ originalName: file.name, size: file.size }),
+        onUploadProgress: ({ percentage }) => setProgress(Math.round(percentage)),
+      })
 
-      const res = await fetch('/api/admin/media', { method: 'POST', body: formData })
-      clearInterval(interval)
-      setProgress(100)
-
-      if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Upload failed')
-      }
+      await fetch('/api/admin/media/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: blob.url,
+          filename: blob.pathname,
+          originalName: file.name,
+          mimeType: blob.contentType || file.type,
+          size: file.size,
+        }),
+      }).catch(() => {})
 
       setSuccess(`"${file.name}" uploaded successfully`)
       router.refresh()
     } catch (err) {
-      clearInterval(interval)
       setError(err instanceof Error ? err.message : 'Upload failed')
     } finally {
       setUploading(false)
-      setTimeout(() => setProgress(0), 1500)
+      setProgress(0)
+      setCurrentFile('')
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
-  }
+  }, [router])
 
   const handleFiles = useCallback(async (files: FileList | null) => {
     if (!files || files.length === 0) return
     for (const file of Array.from(files)) {
       await uploadFile(file)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [uploadFile])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -74,7 +88,6 @@ export default function MediaUploader() {
 
   return (
     <div className="mb-8">
-      {/* Drop zone */}
       <div
         onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
         onDragLeave={() => setDragOver(false)}
@@ -92,7 +105,7 @@ export default function MediaUploader() {
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
+          accept={[...IMAGE_TYPES, ...VIDEO_TYPES].join(',')}
           multiple
           onChange={(e) => handleFiles(e.target.files)}
           className="hidden"
@@ -100,11 +113,11 @@ export default function MediaUploader() {
 
         {uploading ? (
           <div className="space-y-3">
-            <div className="text-2xl">⏳</div>
-            <p className="text-sm font-medium text-gray-700">Uploading…</p>
+            <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[#1F99ED] border-t-transparent" />
+            <p className="text-sm font-medium text-gray-700">Uploading {currentFile}</p>
             <div className="max-w-xs mx-auto bg-gray-200 rounded-full h-2 overflow-hidden">
               <div
-                className="bg-[#1F99ED] h-full transition-all duration-300"
+                className="bg-[#1F99ED] h-full transition-all duration-150"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -112,26 +125,24 @@ export default function MediaUploader() {
           </div>
         ) : (
           <div className="space-y-2">
-            <div className="text-4xl">📁</div>
             <p className="text-base font-semibold text-gray-700">
-              Drop images here or <span className="text-[#1F99ED]">click to upload</span>
+              Drop images or videos here or <span className="text-[#1F99ED]">click to upload</span>
             </p>
             <p className="text-xs text-gray-500">
-              JPG, PNG, WebP, GIF, SVG · Max 10 MB · Multiple files supported
+              JPG, PNG, WebP, GIF, SVG, MP4, WebM, MOV · Images 10 MB · Videos 100 MB · Multiple files supported
             </p>
           </div>
         )}
       </div>
 
-      {/* Feedback */}
       {error && (
-        <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600 flex items-center gap-2">
-          <span>⚠️</span> {error}
+        <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
+          Error: {error}
         </div>
       )}
       {success && (
-        <div className="mt-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-sm text-green-700 flex items-center gap-2">
-          <span>✅</span> {success}
+        <div className="mt-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-sm text-green-700">
+          Success: {success}
         </div>
       )}
     </div>

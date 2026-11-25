@@ -17,7 +17,7 @@ export default function TermsPage() {
 
         <div className="bg-yellow-100 p-6 rounded-lg mb-8">
           <p className="text-sm text-gray-800">
-            ⚠️ <strong>Note:</strong> This is a template terms of service. Replace with actual legal 
+            <strong>Note:</strong> This is a template terms of service. Replace with actual legal 
             document reviewed by qualified legal counsel before going live.
           </p>
         </div>

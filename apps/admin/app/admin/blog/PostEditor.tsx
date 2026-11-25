@@ -6,9 +6,8 @@ import dynamic from 'next/dynamic'
 import SlugField from '@/components/admin/editor/SlugField'
 import SeoFields from '@/components/admin/editor/SeoFields'
 import StatusSelector from '@/components/admin/editor/StatusSelector'
-import CoverImageUploader from '@/components/admin/editor/CoverImageUploader'
-import ImagePickerModal from '@/components/admin/editor/ImagePickerModal'
-import { generateSlug } from '@/lib/slug'
+import MediaField from '@/components/admin/editor/MediaField'
+import { generateSlug } from '@/lib/slug-client'
 import { savePost } from './actions'
 
 // Lazy load the rich text editor (heavy dependency)
@@ -52,7 +51,6 @@ export default function PostEditor({
 }: PostEditorProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [showMediaPicker, setShowMediaPicker] = useState(false)
 
   const [title, setTitle] = useState(post?.title ?? '')
   const [slug, setSlug] = useState(post?.slug ?? '')
@@ -138,7 +136,7 @@ export default function PostEditor({
   const saveLabel = {
     idle: 'Save',
     saving: 'Saving…',
-    saved: 'Saved ✓',
+    saved: 'Saved',
     unsaved: 'Save',
     error: 'Retry',
   }[saveStatus]
@@ -193,7 +191,6 @@ export default function PostEditor({
           />
         </div>
 
-        {/* Sidebar — 1/3 */}
         <div className="space-y-5">
           {/* Save / Status bar */}
           <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-4">
@@ -228,12 +225,8 @@ export default function PostEditor({
 
           {/* Cover Image */}
           <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Cover Image</h3>
-            <CoverImageUploader
-              value={coverImage}
-              onChange={setCoverImage}
-              onOpenMediaLibrary={() => setShowMediaPicker(true)}
-            />
+            <h3 className="text-sm font-medium text-gray-700 mb-3">Cover Media</h3>
+            <MediaField value={coverImage} onChange={setCoverImage} />
           </div>
 
           {/* Categories */}
@@ -292,15 +285,6 @@ export default function PostEditor({
           </div>
         </div>
       </form>
-
-      <ImagePickerModal
-        open={showMediaPicker}
-        onClose={() => setShowMediaPicker(false)}
-        onSelect={(url) => {
-          setCoverImage(url)
-          setShowMediaPicker(false)
-        }}
-      />
     </>
   )
 }

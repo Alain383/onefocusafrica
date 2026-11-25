@@ -16,34 +16,36 @@ export default async function BlogListPage({ searchParams }: PageProps) {
   const page = Number(params.page ?? '1')
   const skip = (page - 1) * PAGE_SIZE
 
-  // Build where clause without case-insensitive search (SQLite compatibility)
   const where: Prisma.PostWhereInput = {
     ...(params.status ? { status: params.status as 'DRAFT' | 'REVIEW' | 'SCHEDULED' | 'PUBLISHED' } : {}),
     ...(params.category ? { categories: { some: { slug: params.category } } } : {}),
+    ...(params.q ? { title: { contains: params.q, mode: 'insensitive' } } : {}),
   }
 
-  const [allPosts, categories] = await Promise.all([
+  const [posts, total, categories] = await Promise.all([
     prisma.post.findMany({
       where,
       orderBy: { createdAt: 'desc' },
-      include: { author: { select: { name: true } }, categories: { select: { name: true, slug: true } } },
+      skip,
+      take: PAGE_SIZE,
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        createdAt: true,
+        author: { select: { name: true } },
+        categories: { select: { name: true } },
+      },
     }),
+    prisma.post.count({ where }),
     prisma.postCategory.findMany({ orderBy: { name: 'asc' }, select: { name: true, slug: true } }),
   ])
-
-  // Filter by search query in JavaScript (case-insensitive)
-  const filteredPosts = params.q
-    ? allPosts.filter(post => post.title.toLowerCase().includes(params.q!.toLowerCase()))
-    : allPosts
-
-  // Apply pagination
-  const total = filteredPosts.length
-  const posts = filteredPosts.slice(skip, skip + PAGE_SIZE)
 
   return (
     <div>
       <PageHeader
-        title="Blog & Articles"
+        title="Blog posts"
+        description="Articles shown on the public /blog page. Only posts with status PUBLISHED appear there."
         breadcrumbs={[{ label: 'Admin', href: '/admin' }, { label: 'Blog' }]}
         action={
           <Link

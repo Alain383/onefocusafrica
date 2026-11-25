@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
-import { signIn } from 'next-auth/react'
+import { useEffect, useState, type FormEvent } from 'react'
+import Image from 'next/image'
+import { signIn, getProviders, getCsrfToken } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import AdminIcon from '@/components/admin/AdminIcon'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -12,30 +14,30 @@ export default function AdminLoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
+  useEffect(() => {
+    void Promise.all([getProviders(), getCsrfToken()]).catch(() => {})
+  }, [])
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault()
     setLoading(true)
     setError(null)
 
     try {
-      console.log('[LOGIN] Attempting sign in with:', email)
       const result = await signIn('credentials', {
         email,
         password,
         redirect: false,
       })
 
-      console.log('[LOGIN] SignIn result:', result)
       if (!result || result.error) {
-        console.log('[LOGIN] Error:', result?.error)
-        const msg = result?.error ?? ''
-        if (msg.toLowerCase().includes('too many') || msg.includes('429')) {
-          setError(msg)
+        const message = result?.error ?? ''
+        if (message.toLowerCase().includes('too many') || message.includes('429')) {
+          setError(message)
         } else {
           setError('Invalid email or password.')
         }
       } else {
-        console.log('[LOGIN] Success! Redirecting to /admin')
         router.push('/admin')
       }
     } catch {
@@ -46,83 +48,97 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#101D3A]">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-[#101D3A] mb-2">
-            ONEFOCUS AFRICA
-          </h1>
-          <p className="text-gray-500 text-sm">Admin Dashboard</p>
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#10183F] px-4 py-10">
+      <div className="absolute -left-32 -top-32 h-80 w-80 rounded-full bg-[#1F99ED]/20 blur-3xl" />
+      <div className="absolute -bottom-40 -right-24 h-96 w-96 rounded-full bg-[#2E3192]/40 blur-3xl" />
+
+      <div className="relative w-full max-w-md">
+        <div className="mb-6 flex items-center justify-center gap-3">
+          <Image
+            src="/images/onefocuslogo-on-dark.png?v=2"
+            alt="ONEFOCUS AFRICA"
+            width={484}
+            height={512}
+            priority
+            className="h-12 w-auto object-contain"
+          />
+          <div>
+            <p className="text-sm font-semibold text-white">ONEFOCUS AFRICA</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/45">Control room</p>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email address
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F99ED] focus:border-transparent"
-              placeholder="admin@onefocusafrica.com"
-            />
+        <div className="rounded-3xl border border-white/10 bg-white p-7 shadow-2xl sm:p-9">
+          <div className="mb-7">
+            <h1 className="text-2xl font-bold text-[#10183F]">Welcome back</h1>
+            <p className="mt-1 text-sm text-[#6B7280]">Sign in to manage the website.</p>
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <div className="relative">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-[#374151]">
+                Email address
+              </label>
               <input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
+                id="email"
+                type="email"
+                autoComplete="email"
                 required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2.5 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F99ED] focus:border-transparent"
-                placeholder="••••••••"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                className="w-full rounded-xl border border-[#DCE3EC] px-4 py-3 text-sm text-[#10183F] outline-none transition-colors focus:border-[#1F99ED] focus:ring-2 focus:ring-[#1F99ED]/15"
+                placeholder="admin@onefocusafrica.com"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-1 text-gray-500"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                    <line x1="1" y1="1" x2="23" y2="23" />
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                )}
-              </button>
             </div>
-          </div>
 
-          {error && (
-            <div role="alert" className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
-              {error}
+            <div>
+              <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-[#374151]">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  className="w-full rounded-xl border border-[#DCE3EC] px-4 py-3 pr-12 text-sm text-[#10183F] outline-none transition-colors focus:border-[#1F99ED] focus:ring-2 focus:ring-[#1F99ED]/15"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((current) => !current)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-[#6B7280] hover:bg-[#EEF6FD]"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  <AdminIcon name={showPassword ? 'eyeOff' : 'eye'} className="h-4 w-4" />
+                </button>
+              </div>
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#1F99ED] text-white py-2.5 rounded-lg font-medium hover:bg-[#1a87d4] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-          >
-            {loading ? 'Signing in…' : 'Sign in'}
-          </button>
-        </form>
+            {error && (
+              <div role="alert" className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <AdminIcon name="alert" className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1F99ED] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#1A87D4] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? 'Signing in…' : 'Sign in'}
+              {!loading && <AdminIcon name="arrow" className="h-4 w-4" />}
+            </button>
+          </form>
+        </div>
+
+        <p className="mt-5 text-center text-xs text-white/40">
+          Authorized ONEFOCUS team access only
+        </p>
       </div>
-    </div>
+    </main>
   )
 }

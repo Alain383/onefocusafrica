@@ -2,12 +2,19 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import type { MediaBlock } from '@onefocus/shared/media'
+import CmsMedia from '../CmsMedia'
 import Container from '../ui/Container'
 import Button from '../ui/Button'
 
-export default function Header() {
+const DEFAULT_LOGO: MediaBlock = {
+  type: 'image',
+  url: '/images/onefocuslogo-official.png',
+  alt: 'ONEFOCUS AFRICA',
+}
+
+export default function Header({ logo = DEFAULT_LOGO }: { logo?: MediaBlock }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
@@ -16,6 +23,13 @@ export default function Header() {
   const isHome = pathname === '/'
   // Navbar is "solid" if we're not on the homepage OR if the user has scrolled
   const solid = !isHome || scrolled
+  const isDefaultLogo = logo.url === DEFAULT_LOGO.url
+  const logoUrl = isDefaultLogo
+    ? solid
+      ? '/images/onefocuslogo-on-light.png?v=2'
+      : '/images/onefocuslogo-on-dark.png?v=2'
+    : logo.url
+  const logoFilter = isDefaultLogo || solid ? '' : 'brightness-0 invert'
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80)
@@ -26,6 +40,7 @@ export default function Header() {
   const navigation = [
     { name: 'Solutions', href: '/solutions' },
     { name: 'Our Work', href: '/work' },
+    { name: 'Gallery', href: '/gallery' },
     { name: 'Talent & Learning', href: '/talent' },
     { name: 'Blog & Insights', href: '/blog' },
     { name: 'About', href: '/about' },
@@ -65,17 +80,14 @@ export default function Header() {
               aria-label="ONEFOCUS AFRICA — Home"
             >
               {/* Responsive logo sizing - smaller for single line fit */}
-              <Image
-                src="/images/onefocuslogo-official.png"
-                alt="ONEFOCUS AFRICA"
+              <CmsMedia
+                block={{ ...logo, url: logoUrl }}
                 width={160}
                 height={52}
                 priority
-                quality={90}
-                sizes="160px"
                 className={[
                   'h-8 sm:h-10 md:h-11 lg:h-12 w-auto object-contain transition-all duration-300',
-                  solid ? 'brightness-100' : 'brightness-[10]',
+                  logoFilter,
                 ].join(' ')}
               />
               <span
@@ -150,8 +162,8 @@ export default function Header() {
 
           {/* ── CTA ── */}
           <div className="hidden lg:flex lg:flex-[0_0_auto]">
-            <Button href="/contact" variant="primary" size="sm">
-              Start a Project →
+            <Button href="/contact?intent=PROJECT&subject=New%20project" variant="primary" size="sm">
+              Start a Project
             </Button>
           </div>
         </nav>
@@ -188,13 +200,13 @@ export default function Header() {
               ))}
               <div className="px-3 pt-3">
                 <Button
-                  href="/contact"
+                  href="/contact?intent=PROJECT&subject=New%20project"
                   variant="primary"
                   size="md"
                   className="w-full"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Start a Project →
+                  Start a Project
                 </Button>
               </div>
             </div>

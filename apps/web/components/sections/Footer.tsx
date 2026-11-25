@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import Container from '../ui/Container'
 
 export default function Footer() {
@@ -17,7 +16,7 @@ export default function Footer() {
       { name: 'Solutions', href: '/solutions' },
       { name: 'Marketing Tours', href: '/solutions#marketing-tours' },
       { name: 'Our Work', href: '/work' },
-      { name: 'Start a Project', href: '/contact' },
+      { name: 'Start a Project', href: '/contact?intent=PROJECT&subject=New%20project' },
     ],
     Ecosystem: [
       { name: 'Talent & Learning', href: '/talent' },
@@ -27,6 +26,7 @@ export default function Footer() {
     ],
     Company: [
       { name: 'About', href: '/about' },
+      { name: 'Gallery', href: '/gallery' },
       { name: 'Contact', href: '/contact' },
     ],
   }

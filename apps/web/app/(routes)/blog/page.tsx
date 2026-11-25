@@ -2,7 +2,8 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { Prisma } from '@onefocus/database'
-import Image from 'next/image'
+import CmsMedia from '@/components/CmsMedia'
+import { toMediaBlock } from '@/lib/site-content'
 
 const PAGE_SIZE = 9
 
@@ -30,12 +31,15 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
   const where: Prisma.PostWhereInput = {
     status: 'PUBLISHED',
     ...(params.category ? { categories: { some: { slug: params.category } } } : {}),
+    ...(params.q ? { title: { contains: params.q, mode: 'insensitive' } } : {}),
   }
 
-  const [allPosts, categories] = await Promise.all([
+  const [posts, total, categories] = await Promise.all([
     prisma.post.findMany({
       where,
       orderBy: { publishedAt: 'desc' },
+      skip,
+      take: PAGE_SIZE,
       select: {
         id: true,
         title: true,
@@ -47,15 +51,10 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
         categories: { select: { name: true, slug: true } },
       },
     }),
+    prisma.post.count({ where }),
     prisma.postCategory.findMany({ orderBy: { name: 'asc' }, select: { name: true, slug: true } }),
   ])
 
-  const filteredPosts = params.q
-    ? allPosts.filter(post => post.title.toLowerCase().includes(params.q!.toLowerCase()))
-    : allPosts
-
-  const total = filteredPosts.length
-  const posts = filteredPosts.slice(skip, skip + PAGE_SIZE)
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
   return (
@@ -132,6 +131,7 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
               ]
               const colorScheme = colors[index % colors.length]
               const readingTime = estimateReadingTime(post.content)
+              const coverMedia = toMediaBlock(post.coverImage, '', post.title)
 
               return (
                 <Link key={post.id} href={`/blog/${post.slug}`} className="group">
@@ -139,14 +139,10 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
                     {/* Image with colored accent */}
                     <div className="relative h-56 overflow-hidden">
                       {post.coverImage ? (
-                        <Image
-                          src={post.coverImage}
-                          alt={post.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          loading="lazy"
+                        <CmsMedia
+                          block={coverMedia}
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          quality={75}
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
                         <div className={`w-full h-full bg-gradient-to-br ${colorScheme.gradient}`} />
@@ -166,7 +162,7 @@ export default async function BlogListingPage({ searchParams }: PageProps) {
                       {/* Meta */}
                       <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
                         <span>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''}</span>
-                        <span>·</span>
+                        <span className="h-1 w-1 rounded-full bg-gray-400" aria-hidden="true" />
                         <span>{readingTime} min read</span>
                       </div>
 

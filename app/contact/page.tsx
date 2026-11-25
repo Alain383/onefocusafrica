@@ -8,7 +8,25 @@ export const metadata = {
     "Get in touch with ONEFOCUS AFRICA. Tell us about your business challenge and we'll help you find the right solution.",
 }
 
-export default function ContactPage() {
+const inquiryCategories = ['PROJECT', 'WORK', 'TRAINING', 'COMMUNITY', 'GENERAL'] as const
+
+type InquiryCategory = (typeof inquiryCategories)[number]
+
+function toCategory(value?: string): InquiryCategory {
+  const upper = value?.toUpperCase()
+  return inquiryCategories.includes(upper as InquiryCategory)
+    ? (upper as InquiryCategory)
+    : 'GENERAL'
+}
+
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ intent?: string }>
+}) {
+  const { intent } = await searchParams
+  const category = toCategory(intent)
+
   return (
     <>
       {/* ── Hero banner ── */}
@@ -121,7 +139,7 @@ export default function ContactPage() {
               engagement, realistic deliverables and responsible next steps.
             </p>
           </div>
-          <InquiryForm />
+          <InquiryForm category={category} />
         </div>
 
         {/* ── Process box ── */}

@@ -72,7 +72,7 @@ export default function Hero() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 items-start">
-              <Button href="/contact" variant="primary" size="lg">
+              <Button href="/contact?intent=PROJECT" variant="primary" size="lg">
                 Start a Project
               </Button>
               <a

@@ -15,17 +15,18 @@ interface InquiryEmailData {
   workEmail: string
   company?: string
   serviceArea: string
+  category?: string
   challenge: string
   objective?: string
 }
 
 export async function sendInquiryNotification(data: InquiryEmailData) {
-  const { fullName, workEmail, company, serviceArea, challenge, objective } = data
+  const { fullName, workEmail, company, serviceArea, category, challenge, objective } = data
 
   const mailOptions = {
     from: process.env.SMTP_FROM || 'onefocusafrica@gmail.com',
     to: process.env.CONTACT_EMAIL || 'onefocusafrica@gmail.com',
-    subject: `New Inquiry from ${fullName} - ${serviceArea}`,
+    subject: `New ${category || 'GENERAL'} inquiry from ${fullName} - ${serviceArea}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #1F99ED;">New Business Inquiry</h2>
@@ -34,6 +35,7 @@ export async function sendInquiryNotification(data: InquiryEmailData) {
           <p><strong>Name:</strong> ${fullName}</p>
           <p><strong>Email:</strong> ${workEmail}</p>
           ${company ? `<p><strong>Company:</strong> ${company}</p>` : ''}
+          <p><strong>Category:</strong> ${category || 'GENERAL'}</p>
           <p><strong>Service Area:</strong> ${serviceArea}</p>
         </div>
         

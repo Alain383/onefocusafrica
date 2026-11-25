@@ -7,11 +7,12 @@ interface Breadcrumb {
 
 interface PageHeaderProps {
   title: string
+  description?: string
   breadcrumbs?: Breadcrumb[]
   action?: React.ReactNode
 }
 
-export default function PageHeader({ title, breadcrumbs, action }: PageHeaderProps) {
+export default function PageHeader({ title, description, breadcrumbs, action }: PageHeaderProps) {
   return (
     <div className="flex items-start justify-between mb-6">
       <div>
@@ -34,6 +35,7 @@ export default function PageHeader({ title, breadcrumbs, action }: PageHeaderPro
           </nav>
         )}
         <h1 className="text-2xl font-bold text-[#101D3A]">{title}</h1>
+        {description && <p className="text-sm text-gray-500 mt-1 max-w-2xl">{description}</p>}
       </div>
       {action && <div>{action}</div>}
     </div>

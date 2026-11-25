@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { generateSlug } from '@/lib/slug'
+import { generateSlug } from '@/lib/slug-client'
 
 interface SlugFieldProps {
   value: string
@@ -46,8 +46,8 @@ export default function SlugField({ value, onChange, postId, siteUrl = '' }: Slu
   const statusEl = {
     idle: null,
     checking: <span className="text-xs text-gray-400">Checking…</span>,
-    unique: <span className="text-xs text-green-600">✓ Available</span>,
-    conflict: <span className="text-xs text-red-500">✗ Already taken</span>,
+    unique: <span className="text-xs text-green-600">Available</span>,
+    conflict: <span className="text-xs text-red-500">Already taken</span>,
   }[status]
 
   return (

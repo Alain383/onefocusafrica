@@ -1,7 +1,8 @@
+import { cache } from 'react'
 import nextAuth from './auth'
 import { redirect } from 'next/navigation'
 
-const auth = nextAuth.auth
+const auth = cache(nextAuth.auth)
 
 export type AdminSession = {
   user: {
@@ -13,14 +14,14 @@ export type AdminSession = {
 }
 
 /**
- * Requires an authenticated session. Redirects to /admin/login if none exists.
+ * Requires an authenticated session. Redirects to /auth/login if none exists.
  * Returns the current session.
  */
 export async function requireAuth(): Promise<AdminSession> {
   const session = await auth()
 
   if (!session) {
-    redirect('/admin/login')
+    redirect('/auth/login')
   }
 
   return session as AdminSession

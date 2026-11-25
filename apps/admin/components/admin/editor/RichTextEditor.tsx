@@ -61,11 +61,11 @@ function Toolbar({ editor, onInsertImage }: { editor: Editor; onInsertImage: () 
       <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} label="Bold"><strong>B</strong></ToolbarButton>
       <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive('italic')} label="Italic"><em>I</em></ToolbarButton>
       <span className="w-px h-5 bg-gray-300 mx-1" aria-hidden="true" />
-      <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive('bulletList')} label="Bullet List">• List</ToolbarButton>
+      <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive('bulletList')} label="Bullet List">List</ToolbarButton>
       <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive('orderedList')} label="Ordered List">1. List</ToolbarButton>
-      <ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive('blockquote')} label="Blockquote">❝</ToolbarButton>
-      <ToolbarButton onClick={setLink} active={editor.isActive('link')} label="Link">🔗</ToolbarButton>
-      <ToolbarButton onClick={onInsertImage} label="Insert Image">🖼️</ToolbarButton>
+      <ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive('blockquote')} label="Blockquote">Quote</ToolbarButton>
+      <ToolbarButton onClick={setLink} active={editor.isActive('link')} label="Link">Link</ToolbarButton>
+      <ToolbarButton onClick={onInsertImage} label="Insert Image">Image</ToolbarButton>
       <ToolbarButton onClick={() => editor.chain().focus().toggleCode().run()} active={editor.isActive('code')} label="Inline Code">`code`</ToolbarButton>
       <span className="w-px h-5 bg-gray-300 mx-1" aria-hidden="true" />
       <ToolbarButton onClick={() => editor.chain().focus().undo().run()} label="Undo">↩</ToolbarButton>

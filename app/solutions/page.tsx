@@ -151,7 +151,7 @@ export default function SolutionsPage() {
                 Interactive Marketing Tours combine cinematic video, sharp photography, live
                 formats and a clear inquiry pathway. Every media asset serves a business purpose.
               </p>
-              <Button href="/contact" variant="primary" size="lg">
+              <Button href="/contact?intent=PROJECT" variant="primary" size="lg">
                 Explore Marketing Tours →
               </Button>
             </div>
@@ -264,7 +264,7 @@ export default function SolutionsPage() {
               >
                 {solution.description}
               </p>
-              <Button href="/contact" variant="primary" size="lg">
+              <Button href="/contact?intent=PROJECT" variant="primary" size="lg">
                 Request This Service →
               </Button>
             </div>
@@ -338,7 +338,7 @@ export default function SolutionsPage() {
           >
             Tell us about your challenge and we&apos;ll help define the right engagement.
           </p>
-          <Button href="/contact" variant="primary" size="lg">
+          <Button href="/contact?intent=PROJECT" variant="primary" size="lg">
             Start a Project →
           </Button>
         </div>
